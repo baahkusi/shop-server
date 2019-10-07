@@ -1,0 +1,6 @@
+falcon
+gunicorn
+peewee
+psycopg2-binary
+sendgrid
+python-dotenv

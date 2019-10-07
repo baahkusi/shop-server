@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: db
+    image: postgres:12
+    ports:
+      - 8001:5432
+    env_file:
+      - '../../shop40.env'
+    networks:
+      shop40:
+  
+  web:
+    container_name: shop40
+    build: 
+      context: ../../
+    env_file:
+      - '../../shop40.env'
+    networks: 
+      shop40:
+    ports:
+      - 8002:80
+    command: gunicorn -b 0.0.0.0:80 shop40.app:api --reload
+    volumes:
+      - ../../:/shop40
+    depends_on:
+      - postgres
+  
+networks:
+  shop40: 

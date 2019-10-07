@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: db
+    image: postgres:12
+    ports:
+      - 8000:80
+    envfile:
+      - '../../shop40.env'
+    networks:
+      shop40:
+  
+  web:
+    container_name: 'shop40'
+    build:
+    context: ../../
+    docker: Dockerfile
+    envfile:
+      - '../../shop40.env'
+    networks: 
+      shop40:
+    volumes:
+      - .:/shop40
+
+  
+networks:
+  shop40: 
+  driver: bridge
