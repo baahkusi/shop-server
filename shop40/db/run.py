@@ -1,23 +1,23 @@
 from ..config import db
 from .auth import *
 
-
-if __name__ == "__main__":
-    import sys
-
-    def up():
+def up():
         print("Creating tables ...")
         db.create_tables([
             Groups, Users, Logins, 
         ])
         print("Successfully created tables ...")
 
-    def down():
-        print("Dropping tables ...")
-        db.drop_tables([
-            Groups, Users, Logins, 
-        ])
-        print("Successfully dropped tables ...")
+def down():
+    print("Dropping tables ...")
+    db.drop_tables([
+        Groups, Users, Logins, 
+    ])
+    print("Successfully dropped tables ...")
+
+if __name__ == "__main__":
+
+    import sys
 
     try:
         if sys.argv[1] == "+":
