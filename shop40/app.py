@@ -6,14 +6,6 @@ from .middlewares import SetUserMiddleware, CORSComponent, PeeweeConnectionMiddl
 
 class Action():
 
-    # def __init__(self, actions):
-
-    #     self.actions = actions
-
-    def __init__(self):
-        
-        self.action = []
-
     def on_post(self, req, resp):
         payload = json.loads(req.stream.read(req.content_length or 0))
 
@@ -58,8 +50,8 @@ class Action():
             request = payload[request_id]
             response[request_id] = {}
             for action in request["000"]:
-                if action in actions.keys():
-                    response[request_id][action] = actions[action](
+                if hasattr(actions, action):
+                    response[request_id][action] = getattr(actions, action)(
                         req, **request[action])
                 else:
                     response[request_id][action] = {
@@ -70,7 +62,7 @@ class Action():
 api = application = falcon.API(
     middleware=[
         CORSComponent(),
-        # PeeweeConnectionMiddleware(),
+        PeeweeConnectionMiddleware(),
         SetUserMiddleware(),
     ]
 )
