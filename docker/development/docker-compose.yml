@@ -17,6 +17,9 @@ services:
       context: ../../
     env_file:
       - '../../shop40.env'
+    enviroment:
+      - TESTING=true
+      - SENDGRID_API_KEY=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
     networks: 
       shop40:
     ports:

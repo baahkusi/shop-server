@@ -1,8 +1,7 @@
 import falcon
 import json
-# from .actions import actions
-# from .db import PeeweeConnectionMiddleware
-from .middlewares import SetUserMiddleware, CORSComponent
+import shop40.actions as actions
+from .middlewares import SetUserMiddleware, CORSComponent, PeeweeConnectionMiddleware
 
 
 class Action():

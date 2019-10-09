@@ -5,6 +5,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from .config import SENDGRID_API_KEY
 
+
 def send_email(to_email, message):
 
     message = Mail(
@@ -16,13 +17,6 @@ def send_email(to_email, message):
     sg = SendGridAPIClient(SENDGRID_API_KEY)
     response = sg.send(message)
     return response
-
-
-def pay_user(amount, payment_data):
-    """
-    Makes the required money transfer to the user
-    """
-    return True
 
 
 def fresh_pin():
@@ -38,24 +32,3 @@ def token(email, pin):
     """
     return sha1(f"{pin},{email}".encode()).hexdigest()
 
-
-def get_data(resource, data_def):
-    """
-    Return data as defined in data_def
-    from resource
-    """
-    data = {}
-    for ddef in data_def.keys():
-        if hasattr(resource, ddef):
-            data[ddef] = data_def[ddef]
-        else:
-            data[ddef] = None
-    return data
-
-
-def points_to_amount(points):
-    """
-    Converts the user's points to amount to be paid by user in Ghana Cedis
-    """
-
-    return 1

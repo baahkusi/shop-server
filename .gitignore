@@ -23,6 +23,7 @@
 *.so
 
 # Distribution / packaging
+docker/
 .Python
 build/
 develop-eggs/

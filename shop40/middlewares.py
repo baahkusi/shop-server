@@ -1,4 +1,5 @@
 from .db import User, Login
+from .config import db
 
 class SetUserMiddleware(object):
     def process_request(self, req, resp):
@@ -59,3 +60,12 @@ class CORSComponent(object):
                 ('Access-Control-Allow-Headers', allow_headers),
                 ('Access-Control-Max-Age', '86400'),  # 24 hours
             ))
+
+
+class PeeweeConnectionMiddleware(object):
+    def process_request(self, req, resp):
+        db.connect()
+
+    def process_response(self, req, resp, resource):
+        if not db.is_closed():
+            db.close()
