@@ -1,4 +1,4 @@
-from .db import User, Login
+from .db import Users, Logins
 from .config import db
 
 class SetUserMiddleware(object):
@@ -26,8 +26,8 @@ class SetUserMiddleware(object):
             req.user = None
         else:
             try:
-                login = Login.get(token=token)
-                user = User.get(email=email)
+                login = Logins.get(token=token)
+                user = Users.get(email=email)
                 if user.id == login.user:
                     req.user = user
                 else:

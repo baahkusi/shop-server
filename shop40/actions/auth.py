@@ -1,4 +1,4 @@
-from shop40.db import User, Login, DataBaseMappings
+from shop40.db import Users, Logins
 from shop40.utils import fresh_pin, send_email, token
 
 
@@ -9,10 +9,10 @@ def register(req, **kwargs):
 
     try:
 
-        user = User.create(email=kwargs['email'])
+        user = Users.create(email=kwargs['email'])
         
         if user.user_type == 'client':
-            login = Login.create(user=user.id, device=kwargs['device'])
+            login = Logins.create(user=user.id, device=kwargs['device'])
             login.pin = int(f"{fresh_pin()}{login.id}")
             login.save()
             message = f'<strong>Login code {login.pin}</strong>'
@@ -35,8 +35,8 @@ def login(req, **kwargs):
     """
     try:
 
-        user = User.get(email=kwargs['email'])
-        login = Login.get(
+        user = Users.get(email=kwargs['email'])
+        login = Logins.get(
             user=user.id, pin=kwargs['fresh_pin'], device=kwargs['device'])
 
         if login.token:
@@ -58,8 +58,8 @@ def generate_pin(req, **kwargs):
     """
     try:
 
-        user = User.get(email=kwargs['email'])
-        login = Login.create(user=user.id, device=kwargs['device'])
+        user = Users.get(email=kwargs['email'])
+        login = Logins.create(user=user.id, device=kwargs['device'])
         login.pin = int(f"{fresh_pin()}{login.id}")
         login.save()
         message = f'<strong>Login code {login.pin}</strong>'

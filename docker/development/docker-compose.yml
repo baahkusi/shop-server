@@ -10,6 +10,7 @@ services:
       - '../../shop40.env'
     networks:
       shop40:
+    restart: unless-stopped
   
   web:
     container_name: shop40
@@ -30,6 +31,7 @@ services:
       - ../../:/shop40
     depends_on:
       - postgres
+    restart: unless-stopped
   
 networks:
   shop40: 

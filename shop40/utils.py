@@ -9,7 +9,7 @@ from .config import SENDGRID_API_KEY
 def send_email(to_email, message):
 
     message = Mail(
-        from_email='akasanoma@example.com',
+        from_email='africaniz@example.com',
         to_emails=to_email,
         subject='Login Pin',
         html_content=message)
