@@ -1,71 +1,85 @@
+import bcrypt
 from shop40.db import Users, Logins
-from shop40.utils import fresh_pin, send_email, token
+from shop40.utils import fresh_pin, send_email, gen_token, shadow_print
+from shop40.decors import login_required
 
 
 def register(req, **kwargs):
     """
-    :kwargs: email, device, user_type
+    :kwargs: email, password
     """
 
     try:
 
-        user = Users.create(email=kwargs['email'])
-        
-        if user.user_type == 'client':
-            login = Logins.create(user=user.id, device=kwargs['device'])
-            login.pin = int(f"{fresh_pin()}{login.id}")
-            login.save()
-            message = f'<strong>Login code {login.pin}</strong>'
-        else:
-            message = f'''You got an invitation to be a<strong> {user.user_type} @Africaniz</strong>. 
-                            Go to <a href="http://africaniz.surge.sh">Africaniz Login.</a> 
-                            "Testing Initial Dashboard, kindly try it out and give feedback"'''
-        send_email(kwargs['email'], message)
+        user = Users.create(
+            email=kwargs["email"],
+            password=bcrypt.hashpw(
+                kwargs["password"].encode(), bcrypt.gensalt()),
+        )
+
+        message = f"""Welcome to <strong> @Africaniz</strong>,.Akwaaba. 
+                            Go to <a href='{req.referer}'>Africaniz Login.</a>"""
+        send_email(kwargs["email"], message)
 
     except Exception as e:
-        return {'status': False, 'data': repr(e)}
+        shadow_print(e)
+        return {"status": False, "data": "Registration Failure."}
 
-    return {'status': True, 'data': ''}
-    
+    return {"status": True, "data": "Registration Success."}
 
 
 def login(req, **kwargs):
     """
-    :kwargs: email, fresh_pin, device
+    :kwargs: email, password, device_hash, device_data
     """
     try:
 
-        user = Users.get(email=kwargs['email'])
-        login = Logins.get(
-            user=user.id, pin=kwargs['fresh_pin'], device=kwargs['device'])
+        user = Users.get_or_none(email=kwargs["email"])
 
-        if login.token:
-            return {'status': False, 'data': 'Pin already used'}
+        if user:
+            if bcrypt.checkpw(kwargs["password"].encode(), user.password.encode()):
 
-        message = f'<strong>Login code {login.pin}</strong>'
-        login.token = token(kwargs['email'], message)
-        login.save()
+                token = gen_token(user.email, fresh_pin())
+                
+                Logins.create(
+                    user=user,
+                    device_hash=kwargs["device_hash"],
+                    device_data=kwargs["device_data"],
+                    token=token,
+                )
+                user_data = {
+                    'email' : user.email,
+                    'level' : user.level,
+                    'is_verified' : user.is_verified
+                }
+                return {"status": True, "data": {"token": token, "user": user_data}}
+            else:
+                return {"status": False, "data": "Wrong Password."}
+        else:
+            return {"status": False, "data": "Missing User."}
 
     except Exception as e:
-        return {'status': False, 'data': repr(e)}
+        shadow_print(e)
+        return {"status": False, "data": "Login Failed."}
 
-    return {'status': True, 'data': {'token': login.token,'user_type':login.user.user_type}}
 
-
-def generate_pin(req, **kwargs):
+@login_required
+def resend_email(req, **kwargs):
     """
-    :kwargs: email, device
+    :kwargs: email
     """
+
     try:
 
-        user = Users.get(email=kwargs['email'])
-        login = Logins.create(user=user.id, device=kwargs['device'])
-        login.pin = int(f"{fresh_pin()}{login.id}")
-        login.save()
-        message = f'<strong>Login code {login.pin}</strong>'
-        send_email(kwargs['email'], message)
+        user = Users.get_or_none(email=kwargs["email"])
+
+        if user:
+            message = f"""Welcome to <strong> @Africaniz</strong>,.Akwaaba. 
+                        Go to <a href='{req.referer}'>Africaniz Login.</a>"""
+            send_email(kwargs["email"], message)
+            return {"status": True, "data": 'Email Sent.'}
+        else:
+            return {"status": False, "data": "Missing User."}
 
     except Exception as e:
-        return {'status': False, 'data': repr(e)}
-
-    return {'status': True, 'data': ''}
+        return {"status": False, "data": "Resend Failed."}

@@ -1,5 +1,5 @@
 import pytest
-from shop40.utils import fresh_pin, token
+from shop40.utils import fresh_pin, gen_token
 
 
 def test_pin():
@@ -10,5 +10,5 @@ def test_pin():
 def test_token():
     pin = fresh_pin()
     email = 'sbk@sbk.sbk'
-    t = token(email, pin)
+    t = gen_token(email, pin)
     assert t

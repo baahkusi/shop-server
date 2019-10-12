@@ -3,13 +3,16 @@ version: '3'
 services:
   postgres:
     container_name: db
-    image: postgres:12
+    image: postgres:11-alpine
     ports:
       - 8001:5432
+      - 5678:5678
     env_file:
       - '../../shop40.env'
     networks:
       shop40:
+    volumes:
+      - '~/dbdata:/var/lib/postgresql/data'
     restart: unless-stopped
   
   web:

@@ -1,19 +1,15 @@
-# shop-server
+# SHOP 40
 
-Server side application for online shop. Generally designed to fit any shop
+An online shop.
 
-### Project Setup
+## Run
 
-pip install requirements.txt
+### Using Docker
 
-#### Database Migrations (Postgres Database)
+docker-compose -f docker/development/docker-compose.yml up
 
-- Set up database variables in shop40.env
-- Run "projectdir$ python3 -m shop40.db +" to create all tables
-- Run "projectdir$ python3 -m shop40.db -" to drop all tables
-- Run "projectdir$ python3 -m shop40.db -+" to drop and create
+### Without Docker
 
-
-#### Run Project
-
-gunicorn shop40.app:api --reload
+- Set up postgres (check shop40/config.py for config variables)
+- pip install -r requirement.txt
+- gunicorn -b 0.0.0.0:80 shop40.app:api --reload

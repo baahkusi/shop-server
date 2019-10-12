@@ -12,9 +12,9 @@ class Action():
         resp.body = json.dumps(self.prepare_response(req, payload))
 
     def prepare_response(self, req, payload):
-        return self.handle_requests(self.actions, req, payload)
+        return self.handle_requests(req, payload)
 
-    def handle_requests(self, actions, req, payload):
+    def handle_requests(self, req, payload):
         """
         This method takes a reqest format :payload: and returns
         a response format.

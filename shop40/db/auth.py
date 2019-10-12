@@ -1,6 +1,7 @@
-from peewee import *
+from peewee import CharField, ManyToManyField, BooleanField, ForeignKeyField, SmallIntegerField
 from playhouse.postgres_ext import JSONField
 from .base import BaseModel
+
 
 class Groups(BaseModel):
     
@@ -10,12 +11,12 @@ class Groups(BaseModel):
 
 class Users(BaseModel):
 
-    email = CharField(max_length=256, null=True, unique=True)
-    phone = CharField(max_length=256, unique=True)
+    email = CharField(unique=True)
+    phone = CharField(null=True, unique=True)
     groups = ManyToManyField(Groups, backref='users')
-    password = CharField(null=True)
+    password = CharField(max_length=512)
     auth_mode = CharField(max_length=64, default='login')
-    is_root = BooleanField(default=False)
+    level = CharField(default='customer') # root | superuser | staff | customer | seller
     is_verified = BooleanField(default=False)
     is_active = BooleanField(default=True)
 
@@ -26,8 +27,7 @@ class Users(BaseModel):
 
 class Logins(BaseModel):
 
-    user = ForeignKeyField(Users, backref='logins', primary_key=True, lazy_load=False)
-    device_hash = CharField(null=True)
+    user = ForeignKeyField(Users, backref='logins', lazy_load=False)
+    device_hash = CharField()
     device_data = JSONField()
-    token = CharField(max_length=512, null=True)
-    duration = SmallIntegerField(default=30, null=True)
+    token = CharField(max_length=512)

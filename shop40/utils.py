@@ -26,9 +26,12 @@ def fresh_pin():
     return ''.join([str(random.randint(0,9)) for n in range(5)])
 
 
-def token(email, pin):
+def gen_token(email, pin):
     """
     Generate a SHA1 Encoded String as token
     """
     return sha1(f"{pin},{email}".encode()).hexdigest()
 
+
+def shadow_print(s):
+    print(s)

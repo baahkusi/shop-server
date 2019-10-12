@@ -1,17 +1,39 @@
 from ..config import db
 from .auth import *
+from .shop40 import *
+from .devices import *
 
 def up():
         print("Creating tables ...")
         db.create_tables([
-            Groups, Users, Logins, 
+            Groups,
+            Users, 
+            Logins,
+            Items,
+            Tags,
+            Combinations,
+            Reviews,
+            Likes,
+            Follows,
+            Orders,
+            Devices
         ])
         print("Successfully created tables ...")
 
 def down():
     print("Dropping tables ...")
     db.drop_tables([
-        Groups, Users, Logins, 
+        Groups,
+            Users, 
+            Logins,
+            Items,
+            Tags,
+            Combinations,
+            Reviews,
+            Likes,
+            Follows,
+            Orders,
+            Devices
     ])
     print("Successfully dropped tables ...")
 

@@ -9,6 +9,6 @@ SENDGRID_API_KEY = getenv("SENDGRID_API_KEY")
 TESTING = getenv('TESTING')
 
 db = PostgresqlExtDatabase(POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD,
-                           host='127.0.0.1', port=5432)
+                           host='db', port=5432)
 
 
