@@ -3,7 +3,7 @@ import random
 from hashlib import sha1
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-from .config import SENDGRID_API_KEY
+from .config import SENDGRID_API_KEY, TESTING
 
 
 def send_email(to_email, message):
@@ -34,4 +34,7 @@ def gen_token(email, pin):
 
 
 def shadow_print(s):
-    print(s)
+    if TESTING:
+        print(s)
+    else:
+        pass

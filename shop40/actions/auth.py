@@ -50,7 +50,8 @@ def login(req, **kwargs):
                 user_data = {
                     'email' : user.email,
                     'level' : user.level,
-                    'is_verified' : user.is_verified
+                    'email_verified' : user.email_verified,
+                    'phone_verified' : user.phone_verified
                 }
                 return {"status": True, "data": {"token": token, "user": user_data}}
             else:
@@ -83,3 +84,12 @@ def resend_email(req, **kwargs):
 
     except Exception as e:
         return {"status": False, "data": "Resend Failed."}
+
+
+@login_required
+def decor_tester(req, **kwargs):
+    """
+    :kwargs: None
+    """
+
+    return {'status':True, 'data':'Decor Tests Passed'}

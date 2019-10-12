@@ -17,7 +17,8 @@ class Users(BaseModel):
     password = CharField(max_length=512)
     auth_mode = CharField(max_length=64, default='login')
     level = CharField(default='customer') # root | superuser | staff | customer | seller
-    is_verified = BooleanField(default=False)
+    email_verified = BooleanField(default=False)
+    phone_verified = BooleanField(default=False)
     is_active = BooleanField(default=True)
 
     @property
@@ -27,7 +28,8 @@ class Users(BaseModel):
 
 class Logins(BaseModel):
 
-    user = ForeignKeyField(Users, backref='logins', lazy_load=False)
+    user = ForeignKeyField(Users, backref='logins')
     device_hash = CharField()
     device_data = JSONField()
     token = CharField(max_length=512)
+    expired = BooleanField(default=False)

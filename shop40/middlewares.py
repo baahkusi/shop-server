@@ -1,5 +1,7 @@
+import datetime
 from .db import Users, Logins
 from .config import db
+from .utils import shadow_print
 
 class SetUserMiddleware(object):
     def process_request(self, req, resp):
@@ -19,20 +21,22 @@ class SetUserMiddleware(object):
         Adds: Sets req.user
         """
 
+        shadow_print(req.headers)
         token = req.get_header('Authorization')
-        email = req.get_header('Account-ID')
 
         if token is None:
             req.user = None
         else:
-            try:
-                login = Logins.get(token=token)
-                user = Users.get(email=email)
-                if user.id == login.user:
-                    req.user = user
-                else:
+            login = Logins.get_or_none(token=token)
+            if login is not None:
+                # check if token is still valid
+                now = datetime.datetime.now()
+                days = now - login.ctime
+                if days.days >= 30 or login.expired:
                     req.user = None
-            except:
+                else:
+                    req.user = login
+            else:
                 req.user = None
 
 
@@ -64,7 +68,10 @@ class CORSComponent(object):
 
 class PeeweeConnectionMiddleware(object):
     def process_request(self, req, resp):
-        db.connect()
+        try:
+            db.connect()
+        except Exception as e:
+            shadow_print(e)
 
     def process_response(self, req, resp, resource, req_succeeded):
         if not db.is_closed():
