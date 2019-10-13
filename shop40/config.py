@@ -1,5 +1,6 @@
 from os import getenv
 from dotenv import load_dotenv, find_dotenv
+import cloudinary
 from playhouse.postgres_ext import PostgresqlExtDatabase
 load_dotenv(find_dotenv())
 
@@ -17,5 +18,6 @@ host = 'db' if IN_DOCKER else 'localhost'
 
 db = PostgresqlExtDatabase(POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD,
                            host=host, port=5432)
+
 
 

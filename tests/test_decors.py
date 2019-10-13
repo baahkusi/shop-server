@@ -13,8 +13,7 @@ def test_decors(client):
         "000": ["111"]
     }
 
-    login = Logins.select(Logins.token).join(Users).where(
-        Users.email == 'usebaku@gmail.com').order_by(Logins.id.desc()).get()
+    login = Logins.select(Logins.token).join(Users).order_by(Logins.id.desc()).get()
 
     headers = {'Authorization': login.token}
 

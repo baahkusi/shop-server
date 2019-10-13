@@ -1,3 +1,6 @@
+import cloudinary
+from cloudinary.uploader import upload
+from shop40.config import CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, TESTING
 from shop40.db.shop40 import *
 from shop40.decors import login_required
 from shop40.get_item_adapters import naive_loader, users_shop
@@ -21,8 +24,27 @@ def upload_images(req, **kwargs):
     Upload Images of new product.
     :kwargs: images
     """
-    print(kwargs['images'])
-    return {'status':True, 'data':'Uploads Successfull.'}
+
+    cloudinary.config( 
+        cloud_name = "neaonnim", 
+        api_key = CLOUDINARY_API_KEY, 
+        api_secret = CLOUDINARY_API_SECRET 
+    )
+
+
+    images = []
+    
+    for image in kwargs['images']:
+        images.append(
+            upload(
+                image['image'],
+                folder = 'test' if TESTING else 'africaniz',
+                tags = image['tags'],
+                format = 'jpg'
+            )
+        )
+
+    return {'status':True, 'data':{'images':images}}
 
 
 @login_required
