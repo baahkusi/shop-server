@@ -4,3 +4,5 @@ peewee
 psycopg2-binary
 sendgrid
 bcrypt
+cloudinary
+python-dotenv

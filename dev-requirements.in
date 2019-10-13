@@ -3,3 +3,5 @@ pip-tools
 pipdeptree
 pytest
 tox
+ipython
+python-datauri

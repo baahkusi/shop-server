@@ -5,12 +5,17 @@
 #    pip-compile
 #
 bcrypt==3.1.7
+certifi==2019.9.11        # via cloudinary
 cffi==1.12.3              # via bcrypt
+cloudinary==1.18.2
 falcon==2.0.0
 gunicorn==19.9.0
+mock==3.0.5               # via cloudinary
 peewee==3.11.2
 psycopg2-binary==2.8.3
 pycparser==2.19           # via cffi
+python-dotenv==0.10.3
 python-http-client==3.2.1  # via sendgrid
 sendgrid==6.1.0
-six==1.12.0               # via bcrypt
+six==1.12.0               # via bcrypt, cloudinary, mock
+urllib3==1.25.6           # via cloudinary

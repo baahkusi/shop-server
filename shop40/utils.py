@@ -11,7 +11,7 @@ def send_email(to_email, message):
     message = Mail(
         from_email='africaniz@example.com',
         to_emails=to_email,
-        subject='Login Pin',
+        subject='Africaniz',
         html_content=message)
 
     sg = SendGridAPIClient(SENDGRID_API_KEY)

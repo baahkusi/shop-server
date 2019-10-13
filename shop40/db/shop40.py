@@ -1,6 +1,7 @@
-from peewee import ForeignKeyField, CharField, TextField
+from peewee import ForeignKeyField, CharField, TextField, BooleanField
 from playhouse.postgres_ext import JSONField, ArrayField
 from .auth import Users, BaseModel
+
 
 class Items(BaseModel):
     
@@ -42,4 +43,17 @@ class Follows(BaseModel):
 class Orders(BaseModel):
 
     user = ForeignKeyField(Users, backref='orders', lazy_load=False)
-    order = JSONField()
+    status = CharField(default='waiting') # waiting | processing | cancelled | suspended
+
+
+class OrderItems(BaseModel):
+
+    order = ForeignKeyField(Orders, backref='order_items', lazy_load=False)
+    order_item = JSONField()
+
+
+class Notifications(BaseModel):
+
+    user = ForeignKeyField(Users, backref='orders', lazy_load=False)
+    message = TextField()
+    is_read = BooleanField(default=False) 
