@@ -1,7 +1,7 @@
 import bcrypt
 from shop40.db import Users, Logins
 from shop40.utils import fresh_pin, send_email, gen_token, shadow_print
-from shop40.decors import login_required
+from .decors import login_required
 
 
 def register(req, **kwargs):

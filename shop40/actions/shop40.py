@@ -1,9 +1,8 @@
-import cloudinary
-from cloudinary.uploader import upload
-from shop40.config import CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, TESTING
 from shop40.db.shop40 import *
-from shop40.decors import login_required
-from shop40.get_item_adapters import naive_loader, users_shop
+from shop40.db.auth import Users
+from .decors import login_required
+from .get_items_adapters import naive_loader, users_shop
+from .helpers import upload_images
 
 
 def get_items(req, **kwargs):
@@ -19,40 +18,29 @@ def get_items(req, **kwargs):
 
 
 @login_required
-def upload_images(req, **kwargs):
-    """
-    Upload Images of new product.
-    :kwargs: images
-    """
-
-    cloudinary.config( 
-        cloud_name = "neaonnim", 
-        api_key = CLOUDINARY_API_KEY, 
-        api_secret = CLOUDINARY_API_SECRET 
-    )
-
-
-    images = []
-    
-    for image in kwargs['images']:
-        images.append(
-            upload(
-                image['image'],
-                folder = 'test' if TESTING else 'africaniz',
-                tags = image['tags'],
-                format = 'jpg'
-            )
-        )
-
-    return {'status':True, 'data':{'images':images}}
-
-
-@login_required
 def upload_item(req, **kwargs):
     """
     Upload new product.
-    :kwargs: item_details
+    :kwargs: item_details, seller_id
     """
+    item = kwargs['item_details']
+    
+    item['images'] = upload_images(item['images'], item['tags'])
+
+    try:
+        for i in range(len(item['options'])):
+        
+            for j in range(len(item['options'][i]['values'])):
+                item['options'][i]['values'][j]['images'] = upload_images(item['options'][i]['values'][j]['images'], item['tags'])
+    except Exception as e:
+        {'status':False, 'data':repr(e)}
+    
+    
+    try:
+        seller = Users.get_by_id(int(kwargs['seller_id']))
+        Items.create(user=seller, item=item)
+    except Exception as e:
+        {'status':False, 'data':repr(e)}
 
     return {'status':True, 'data':'Upload Successfull.'}
 

@@ -3,7 +3,7 @@ import random
 from hashlib import sha1
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-from .config import SENDGRID_API_KEY, TESTING
+from shop40.config import SENDGRID_API_KEY, TESTING
 
 
 def send_email(to_email, message):

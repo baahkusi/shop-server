@@ -14,7 +14,7 @@ CLOUDINARY_API_KEY = getenv('CLOUDINARY_API_KEY')
 CLOUDINARY_API_SECRET = getenv('CLOUDINARY_API_SECRET')
 IN_DOCKER = getenv('IN_DOCKER')
 
-host = 'db' if IN_DOCKER else 'localhost'
+host = 'db' if IN_DOCKER=='true' else 'localhost'
 
 db = PostgresqlExtDatabase(POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD,
                            host=host, port=5432)

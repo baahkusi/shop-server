@@ -28,7 +28,7 @@ services:
     ports:
       - 8002:80
       - 5678:5678
-    command: gunicorn -b 0.0.0.0:80 shop40.app:api --reload
+    command: gunicorn -b 0.0.0.0:80 shop40.app:api --reload --timeout 120 --log-level debug
     volumes:
       - ../../:/shop40
     depends_on:
