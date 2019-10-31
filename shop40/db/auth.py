@@ -1,12 +1,12 @@
-from peewee import CharField, ManyToManyField, BooleanField, ForeignKeyField, SmallIntegerField
-from playhouse.postgres_ext import JSONField
+from peewee import CharField, ManyToManyField, BooleanField, ForeignKeyField, SmallIntegerField, IntegerField, DateTimeField
+from playhouse.postgres_ext import JSONField, ArrayField
 from .base import BaseModel
 
 
 class Groups(BaseModel):
     
     name = CharField(max_length=8, unique=True)
-    actions = CharField(unique=True) # comma seperated list of actions allowed for group
+    actions = ArrayField() # list of actions allowed for group
 
 
 class Users(BaseModel):
@@ -19,7 +19,11 @@ class Users(BaseModel):
     level = CharField(default='customer') # root | superuser | staff | customer | seller
     email_verified = BooleanField(default=False)
     phone_verified = BooleanField(default=False)
+    country = CharField(default="Ghana")
+    region = CharField(default="Greater Accra")
     is_active = BooleanField(default=True)
+    last_login = DateTimeField(null=True)
+    login_count = IntegerField(default=0)
 
     @property
     def login(self):

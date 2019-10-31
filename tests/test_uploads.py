@@ -5,9 +5,9 @@ from shop40.db import Logins, Users
 
 def test_upload_item(client):
 
-    imgs1 = [DataURI.from_file(f'tests/images/{i}.jpg') for i in range(1, 3)]
-    imgs2 = [DataURI.from_file(f'tests/images/{i}.jpg') for i in range(7, 9)]
-    imgs3 = [DataURI.from_file(f'tests/images/{i}.jpg') for i in range(13, 15)]
+    imgs1 = [DataURI.from_file(f'tests/images/{i}.jpg') for i in range(1, 2)]
+    imgs2 = [DataURI.from_file(f'tests/images/{i}.jpg') for i in range(7, 8)]
+    imgs3 = [DataURI.from_file(f'tests/images/{i}.jpg') for i in range(13, 14)]
 
     item = {
         "category":1,

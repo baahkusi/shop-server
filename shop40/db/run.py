@@ -11,12 +11,14 @@ def up():
             Logins,
             Items,
             Tags,
+            ItemTag,
             Combinations,
             Reviews,
             Likes,
             Follows,
             Orders,
-            Devices
+            Devices,
+            UserDevices,
         ])
         print("Successfully created tables ...")
 
@@ -28,12 +30,14 @@ def down():
             Logins,
             Items,
             Tags,
+            ItemTag,
             Combinations,
             Reviews,
             Likes,
             Follows,
             Orders,
-            Devices
+            Devices,
+            UserDevices,
     ])
     print("Successfully dropped tables ...")
 

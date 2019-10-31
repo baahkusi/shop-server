@@ -1,0 +1,1 @@
+gunicorn -b 0.0.0.0:80 shop40.app:api --timeout 120 --workers 99

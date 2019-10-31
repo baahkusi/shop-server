@@ -2,7 +2,7 @@ from shop40.db.shop40 import *
 from shop40.db.auth import Users
 from .decors import login_required
 from .get_items_adapters import naive_loader, users_shop
-from .helpers import upload_images
+from .helpers import upload_images, add_tags
 
 
 def get_items(req, **kwargs):
@@ -17,7 +17,7 @@ def get_items(req, **kwargs):
         return naive_loader(req, **kwargs)
 
 
-@login_required
+# @login_required
 def upload_item(req, **kwargs):
     """
     Upload new product.
@@ -33,14 +33,15 @@ def upload_item(req, **kwargs):
             for j in range(len(item['options'][i]['values'])):
                 item['options'][i]['values'][j]['images'] = upload_images(item['options'][i]['values'][j]['images'], item['tags'])
     except Exception as e:
-        {'status':False, 'data':repr(e)}
+        return {'status':False, 'data':repr(e)}
     
     
     try:
         seller = Users.get_by_id(int(kwargs['seller_id']))
-        Items.create(user=seller, item=item)
+        item = Items.create(user=seller, item=item)
+        add_tags(item, item.item['tags'])
     except Exception as e:
-        {'status':False, 'data':repr(e)}
+        return {'status':False, 'data':repr(e)}
 
     return {'status':True, 'data':'Upload Successfull.'}
 
