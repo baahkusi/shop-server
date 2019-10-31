@@ -21,14 +21,16 @@ def upload_images(images, tags):
     imgs = []
     
     for image in images:
-        imgs.append(
-            upload(
+        img = upload(
                 image,
                 folder = 'test' if TESTING=='true' else 'africaniz',
                 tags = tags,
                 format = 'jpg'
             )
-        )
+        imgs.append({
+            'url':img['secure_url'],
+            'id':img['public_id']
+        })
 
     return imgs
 

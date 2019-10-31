@@ -1,5 +1,4 @@
-from shop40.db.shop40 import *
-from shop40.db.auth import Users
+from shop40.db import Items, Users
 from .decors import login_required
 from .get_items_adapters import naive_loader, users_shop
 from .helpers import upload_images, add_tags
@@ -8,13 +7,13 @@ from .helpers import upload_images, add_tags
 def get_items(req, **kwargs):
     """
     Get items for display
-    :kwargs: limit, filters, device_hash, device_data, context(user's interest so far)
+    :kwargs: limit, filters, device_hash, context(user's interest so far)
     """
 
     if req.user:
         return users_shop(req, **kwargs)
     else:
-        return naive_loader(req, **kwargs)
+        return naive_loader(**kwargs)
 
 
 # @login_required

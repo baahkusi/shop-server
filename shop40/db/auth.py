@@ -1,4 +1,4 @@
-from peewee import CharField, ManyToManyField, BooleanField, ForeignKeyField, SmallIntegerField, IntegerField, DateTimeField
+from peewee import CharField, ManyToManyField, BooleanField, ForeignKeyField, SmallIntegerField, IntegerField, DateTimeField, TextField
 from playhouse.postgres_ext import JSONField, ArrayField
 from .base import BaseModel
 
@@ -15,6 +15,8 @@ class Users(BaseModel):
     phone = CharField(null=True, unique=True)
     groups = ManyToManyField(Groups, backref='users')
     password = CharField(max_length=512)
+    name = CharField(default="sbk")
+    desc = TextField(null=True)
     auth_mode = CharField(max_length=64, default='login')
     level = CharField(default='customer') # root | superuser | staff | customer | seller
     email_verified = BooleanField(default=False)
