@@ -2,13 +2,13 @@ import shop40.db as db
 from .decors import login_required
 
 
-def read(req, **kwargs):
+def read(resource, id):
     """
     :kwargs: resource, id
     """
     try:
 
-        resource = getattr(db, kwargs['resource'])
+        resource = getattr(db, resource)
         data = resource.get_by_id(id)
 
     except Exception as e:
@@ -17,14 +17,14 @@ def read(req, **kwargs):
     return {'status': True, 'data':data}
 
 
-def read_many(req, **kwargs):
+def read_many(resource, filters):
     """
-    :kwargs: resource, filters
+    :params: resource, filters
     """
     try:
 
-        resource = getattr(db, kwargs['resource'])
-        filters = kwargs['filters']  # query filters
+        resource = getattr(db, resource)
+        filters = filters  # query filters
         data = resource.get(**filters)
 
     except Exception as e:
@@ -33,15 +33,14 @@ def read_many(req, **kwargs):
     return {'status': True, 'data':data}
 
 
-@login_required
-def create(req, **kwargs):
+def create(resource, data):
     """
-    :kwargs: resource, data
+    :params: resource, data
     """
     try:
 
-        resource = getattr(db, kwargs['resource'])
-        resource.create(**kwargs['data'])
+        resource = getattr(db, resource)
+        resource.create(**data)
 
     except Exception as e:
         return {'status': False, 'data':repr(e)}
@@ -49,15 +48,14 @@ def create(req, **kwargs):
     return {'status': True, 'data':''}
 
 
-@login_required
-def update(req, **kwargs):
+def update(resource, id, data):
     """
-    :kwargs: resource, id, data
+    :params: resource, id, data
     """
     try:
 
-        resource = getattr(db, kwargs['resource'])
-        data = resource.update(**kwargs['data']).execute()
+        resource = getattr(db, resource)
+        data = resource.update(data).execute()
 
     except Exception as e:
         return {'status': False, 'data':repr(e)}
@@ -65,15 +63,14 @@ def update(req, **kwargs):
     return {'status': True, 'data':data}
 
 
-@login_required
-def delete(req, **kwargs):
+def delete(resource, id):
     """
-    :kwargs: resource, id
+    :params: resource, id
     """
     try:
 
-        resource = getattr(db, kwargs['resource'])
-        data = resource.delete().where(id=kwargs['id']).execute()
+        resource = getattr(db, resource)
+        data = resource.delete().where(id=id).execute()
 
     except Exception as e:
         return {'status': False, 'data':repr(e)}
