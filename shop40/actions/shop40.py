@@ -63,3 +63,20 @@ def place_order(req, **kwargs):
     """
 
     return {'status':True, 'data':'Order Placed.'}
+
+
+@login_required
+def set_info(req, **kwargs):
+    """
+    Set information of user
+    :kwargs: info, data
+    """
+
+    try:
+        old_info = req.user.info
+        old_info[kwargs['info']] = kwargs['data']
+        Users.update(info = old_info).execute()
+    except Exception as e:
+        return {'status':False,'data':repr(e)}
+    
+    return {'status':True,'data':'Info Updated.'}

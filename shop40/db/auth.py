@@ -12,17 +12,14 @@ class Groups(BaseModel):
 class Users(BaseModel):
 
     email = CharField(unique=True)
-    phone = CharField(null=True, unique=True)
     groups = ManyToManyField(Groups, backref='users')
     password = CharField(max_length=512)
     name = CharField(default="sbk")
-    desc = TextField(null=True)
-    auth_mode = CharField(max_length=64, default='login')
+    auth_mode = CharField(max_length=64, default='login') #login  social
     level = CharField(default='customer') # root | superuser | staff | customer | seller
     email_verified = BooleanField(default=False)
     phone_verified = BooleanField(default=False)
-    country = CharField(default="Ghana")
-    region = CharField(default="Greater Accra")
+    info = JSONField(default= lambda : {})
     is_active = BooleanField(default=True)
     last_login = DateTimeField(null=True)
     login_count = IntegerField(default=0)

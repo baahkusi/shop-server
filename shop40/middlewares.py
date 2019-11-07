@@ -35,7 +35,7 @@ class SetUserMiddleware(object):
                 if days.days >= 30 or login.expired:
                     req.user = None
                 else:
-                    req.user = login
+                    req.user = login.user
             else:
                 req.user = None
 

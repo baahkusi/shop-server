@@ -7,8 +7,15 @@ migrator = PostgresqlMigrator(db)
 
 migrations = [
     [
-        migrator.add_column('users', 'name', Users.name),
-        migrator.add_column('users', 'desc', Users.desc),
+        migrator.drop_column('users','phone'),
+        migrator.drop_column('users','desc'),
+        migrator.drop_column('users','phone'),
+        migrator.drop_column('users','desc'),
+        migrator.add_column('users', 'info', Users.info),
+    ],
+    [
+        migrator.drop_column('users','info'),
+        migrator.add_column('users', 'info', Users.info)
     ]
 ]
 
