@@ -14,7 +14,7 @@ class Users(BaseModel):
     email = CharField(unique=True)
     groups = ManyToManyField(Groups, backref='users')
     password = CharField(max_length=512)
-    name = CharField(default="sbk")
+    name = CharField(unique=True, default="sbk")
     auth_mode = CharField(max_length=64, default='login') #login  social
     level = CharField(default='customer') # root | superuser | staff | customer | seller
     email_verified = BooleanField(default=False)
@@ -35,4 +35,9 @@ class Logins(BaseModel):
     device_hash = CharField()
     device_data = JSONField()
     token = CharField(max_length=512)
-    expired = BooleanField(default=False)
+
+
+class Activations(BaseModel):
+
+    user = ForeignKeyField(Users, backref='logins')
+    code = CharField(unique=True)

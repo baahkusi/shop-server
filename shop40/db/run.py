@@ -3,43 +3,48 @@ from .auth import *
 from .shop40 import *
 from .devices import *
 
+
 def up():
-        print("Creating tables ...")
-        db.create_tables([
-            Groups,
-            Users, 
-            Logins,
-            Items,
-            Tags,
-            ItemTag,
-            Combinations,
-            Reviews,
-            Likes,
-            Follows,
-            Orders,
-            Devices,
-            UserDevices,
-        ])
-        print("Successfully created tables ...")
+    print("Creating tables ...")
+    db.create_tables([
+        Groups,
+        Users,
+        Logins,
+        Activations,
+        Items,
+        Tags,
+        ItemTag,
+        Combinations,
+        Reviews,
+        Likes,
+        Follows,
+        Orders,
+        Devices,
+        UserDevices,
+    ])
+    print("Successfully created tables ...")
+
 
 def down():
     print("Dropping tables ...")
     db.drop_tables([
         Groups,
-            Users, 
-            Logins,
-            Items,
-            Tags,
-            ItemTag,
-            Combinations,
-            Reviews,
-            Likes,
-            Follows,
-            Orders,
-            Devices,
-            UserDevices,
+        Users,
+        Logins,
+        Activations,
+        Items,
+        Tags,
+        ItemTag,
+        Combinations,
+        Reviews,
+        Likes,
+        Follows,
+        Orders,
+        Devices,
+        UserDevices,
     ])
     print("Successfully dropped tables ...")
+
 
 if __name__ == "__main__":
 

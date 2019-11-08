@@ -16,6 +16,12 @@ migrations = [
     [
         migrator.drop_column('users','info'),
         migrator.add_column('users', 'info', Users.info)
+    ],
+    [
+        migrator.add_index('users', ['name'], unique=True)
+    ],
+    [
+        migrator.drop_column('logins', 'expired')
     ]
 ]
 

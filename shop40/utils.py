@@ -19,11 +19,11 @@ def send_email(to_email, message):
     return response
 
 
-def fresh_pin():
+def fresh_pin(n = 5):
     """
-    Generate a random 5 digit pin
+    Generate a random n digit pin
     """
-    return ''.join([str(random.randint(0,9)) for n in range(5)])
+    return ''.join([str(random.randint(0,9)) for n in range(n)])
 
 
 def gen_token(email, pin):

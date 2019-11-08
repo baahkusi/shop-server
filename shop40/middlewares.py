@@ -31,8 +31,8 @@ class SetUserMiddleware(object):
             if login is not None:
                 # check if token is still valid
                 now = datetime.datetime.now()
-                days = now - login.ctime
-                if days.days >= 30 or login.expired:
+                tdelta = now - login.ctime
+                if tdelta.days >= 30:
                     req.user = None
                 else:
                     req.user = login.user

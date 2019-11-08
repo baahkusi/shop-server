@@ -74,14 +74,22 @@ def set_info(req, **kwargs):
 
     try:
         old_info = req.user.info
-        if kwargs['info'] == 'personal':
+        if kwargs['info'] in ['personal', 'social']:
             old_info[kwargs['info']] = kwargs['data']
+            Users.update(info = old_info).where(Users.id==req.user.id).execute()
         elif kwargs['info'] == 'profile':
             data = kwargs['data']
             data['brand'] = upload_images(data['brand'], [data['title']])
             data['logo'] = upload_images(data['logo'], [data['title']])
             old_info[kwargs['info']] = data
-        Users.update(info = old_info).execute()
+            Users.update(info = old_info).where(Users.id==req.user.id).execute()
+        elif kwargs['info'] == 'account':
+            if Users.select().where(Users.name==kwargs['data']['name']).exists():
+                return {'status':False, 'data':'Username Exists.'}
+            Users.update(name=kwargs['data']['name']).where(Users.id == req.user.id).execute()
+        else:
+            return  {'status':False,'data':'Dunno what to do.'}
+            
 
     except Exception as e:
         return {'status':False,'data':repr(e)}
