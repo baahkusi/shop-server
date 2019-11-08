@@ -9,7 +9,7 @@ def test_get_items(client):
 
     payload = {
         "111": {
-            "get_items": {"limit":4},
+            "get_items": {"page":1},
             "000": ["get_items"]
         },
         "000": ["111"]

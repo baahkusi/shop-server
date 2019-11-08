@@ -12,9 +12,10 @@ class Groups(BaseModel):
 class Users(BaseModel):
 
     email = CharField(unique=True)
+    phone = CharField(unique=True, null=True)
     groups = ManyToManyField(Groups, backref='users')
     password = CharField(max_length=512)
-    name = CharField(unique=True, default="sbk")
+    name = CharField(unique=True, null=True)
     auth_mode = CharField(max_length=64, default='login') #login  social
     level = CharField(default='customer') # root | superuser | staff | customer | seller
     email_verified = BooleanField(default=False)

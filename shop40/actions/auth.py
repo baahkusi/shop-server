@@ -101,13 +101,18 @@ def resend_email(req, **kwargs):
 def activate_account(req, **kwargs):
     """
     :kwargs: phase (there are two phases, first generate, second activate), code
+            medium ( phone | email)
     """
 
     if kwargs['phase'] == 'generate':
         try:
             activation = Activations.create(user=req.user, code=fresh_pin(6))
             message = f"""Here is your activation code from @Africaniz {activation.code}. It will expire in 30 minutes."""
-            send_email(req.user.email, message)
+            if kwargs['medium'] == 'email':
+                send_email(req.user.email, message)
+            elif kwargs['medium'] == 'phone':
+                if not req.user.phone:
+                    return {'status':False, 'data':'Null Number.'}
         except Exception as e:
             return {'status': False, 'data': repr(e)}
         return {'status': True, 'data': 'Pin Sent.'}
@@ -116,8 +121,12 @@ def activate_account(req, **kwargs):
             activation = Activations.get_or_none(code=kwargs['code'])
             if activation:
                 if activation.user == req.user:
-                    Users.update(email_verified=True).where(
-                        Users.id == req.user.id).execute()
+                    if kwargs['medium'] == 'email':
+                        Users.update(email_verified=True).where(
+                            Users.id == req.user.id).execute()
+                    elif kwargs['medium'] == 'phone':
+                        Users.update(phone_verified=True).where(
+                            Users.id == req.user.id).execute()
                 else:
                     return {'status': False, 'data': 'Wrong User.'}
             else:

@@ -22,6 +22,12 @@ migrations = [
     ],
     [
         migrator.drop_column('logins', 'expired')
+    ],
+    [
+        migrator.add_column('users','phone', Users.phone)
+    ],
+    [
+        migrator.drop_not_null('users','name')
     ]
 ]
 

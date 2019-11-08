@@ -44,10 +44,12 @@ def test_login(client):
 
 
 def test_activate_account(client):
+    medium = "phone"
     payload = {
         "111": {
             "activate_account": {
-                "phase": "generate"
+                "phase": "generate",
+                "medium":medium
             },
             "000": ["activate_account"]
         },
@@ -63,12 +65,14 @@ def test_activate_account(client):
                                     headers=headers)
 
     r1 = response.json["111"]["activate_account"]["status"]
+    r2 = False
     if r1:
         code = Activations.select().order_by(Activations.id.desc()).get().code
         payload = {
             "111": {
                 "activate_account": {
                     "phase": "activate",
+                    "medium":medium,
                     "code": code
                 },
                 "000": ["activate_account"]
@@ -80,5 +84,4 @@ def test_activate_account(client):
                                         body=json.dumps(payload),
                                         headers=headers)
         r2 = response.json["111"]["activate_account"]["status"]
-        assert r1 and r2
-    assert 0
+    assert r1 and r2

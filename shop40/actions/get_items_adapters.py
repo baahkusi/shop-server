@@ -7,14 +7,16 @@ from shop40.db import Items, Users
 def naive_loader(**kwargs):
     """
     The naive loader is basically naive, loads items from top to down
-    :kwargs: limit
+    :kwargs: page
     """
-    limit = kwargs['limit']
+    batch = 16
+    page = kwargs['page']-1
+    start = page*batch
+    end = start + batch
     return Items.select(Users.id.alias('seller_id'),
                         Users.name.alias('seller'),
-                        Users.country.alias('country'),
                         Items.id,
-                        Items.item).join(Users).dicts()[:limit]
+                        Items.item).join(Users).dicts()[start:end]
 
 
 def users_shop(**kwargs):

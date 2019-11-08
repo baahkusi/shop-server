@@ -7,7 +7,7 @@ from .helpers import upload_images, add_tags
 def get_items(req, **kwargs):
     """
     Get items for display
-    :kwargs: limit, filters, device_hash, context(user's interest so far)
+    :kwargs: page, filters, device_hash, context(user's interest so far)
     """
 
     if req.user:
@@ -84,9 +84,20 @@ def set_info(req, **kwargs):
             old_info[kwargs['info']] = data
             Users.update(info = old_info).where(Users.id==req.user.id).execute()
         elif kwargs['info'] == 'account':
-            if Users.select().where(Users.name==kwargs['data']['name']).exists():
-                return {'status':False, 'data':'Username Exists.'}
-            Users.update(name=kwargs['data']['name']).where(Users.id == req.user.id).execute()
+            if req.user.name != kwargs['data']['name']:
+                if Users.select().where(Users.name==kwargs['data']['name']).exists():
+                    return {'status':False, 'data':'Username Exists.'}
+                Users.update(name=kwargs['data']['name']).where(Users.id == req.user.id).execute()
+            
+            if req.user.email != kwargs['data']['email']:
+                if Users.select().where(Users.email==kwargs['data']['email']).exists():
+                    return {'status':False, 'data':'Email Exists.'}
+                Users.update(email=kwargs['data']['email'], email_verified=False).where(Users.id == req.user.id).execute()
+            
+            if req.user.phone != kwargs['data']['phone']:
+                if Users.select().where(Users.phone==kwargs['data']['phone']).exists():
+                    return {'status':False, 'data':'Phone Exists.'}
+                Users.update(phone=kwargs['data']['phone'], phone_verified=False).where(Users.id == req.user.id).execute()
         else:
             return  {'status':False,'data':'Dunno what to do.'}
             
