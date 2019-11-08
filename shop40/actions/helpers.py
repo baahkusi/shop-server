@@ -6,7 +6,7 @@ from shop40.utils import shadow_print
 
 
 
-def upload_images(images, tags):
+def upload_images(images, tags = []):
     """
     Upload Images of new product.
     """
@@ -21,6 +21,12 @@ def upload_images(images, tags):
     imgs = []
     
     for image in images:
+
+        # Image already uploaded
+        if not isinstance(image, str):
+            imgs.append(image)
+            continue
+
         img = upload(
                 image,
                 folder = 'test' if TESTING=='true' else 'africaniz',

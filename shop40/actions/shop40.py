@@ -74,8 +74,15 @@ def set_info(req, **kwargs):
 
     try:
         old_info = req.user.info
-        old_info[kwargs['info']] = kwargs['data']
+        if kwargs['info'] == 'personal':
+            old_info[kwargs['info']] = kwargs['data']
+        elif kwargs['info'] == 'profile':
+            data = kwargs['data']
+            data['brand'] = upload_images(data['brand'], [data['title']])
+            data['logo'] = upload_images(data['logo'], [data['title']])
+            old_info[kwargs['info']] = data
         Users.update(info = old_info).execute()
+
     except Exception as e:
         return {'status':False,'data':repr(e)}
     
