@@ -9,7 +9,7 @@ def test_get_items(client):
 
     payload = {
         "111": {
-            "get_items": {"page":1},
+            "get_items": {"page":1, "limit":16},
             "000": ["get_items"]
         },
         "000": ["111"]
@@ -18,3 +18,20 @@ def test_get_items(client):
     response = client.simulate_post('/action', body=json.dumps(payload))
 
     assert response.json["111"]["get_items"]["status"]
+
+
+def test_fetch_item(client):
+
+    
+
+    payload = {
+        "111": {
+            "fetch_item": {"item":1},
+            "000": ["fetch_item"]
+        },
+        "000": ["111"]
+    }
+
+    response = client.simulate_post('/action', body=json.dumps(payload))
+
+    assert response.json["111"]["fetch_item"]["status"]
