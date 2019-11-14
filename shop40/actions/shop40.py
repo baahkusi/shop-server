@@ -42,11 +42,11 @@ def fetch_item(req, **kwargs):
     return {'status': True, 'data':{item.id: data} }
 
 
-# @login_required
+@login_required
 def upload_item(req, **kwargs):
     """
     Upload new product.
-    :kwargs: item_details, seller_id
+    :kwargs: item_details, seller_id, update ( whether it is an update)
     """
     item = kwargs['item_details']
 
@@ -63,12 +63,16 @@ def upload_item(req, **kwargs):
 
     try:
         seller = Users.get_by_id(int(kwargs['seller_id']))
-        item = Items.create(user=seller, item=item)
+        if 'update' in kwargs:
+            item = Items.update(item=item).where(Items.id==int(kwargs['id'])).execute()
+            item = Items.get_by_id(item)
+        else:
+            item = Items.create(user=seller, item=item)
         add_tags(item, item.item['tags'])
     except Exception as e:
         return {'status': False, 'data': repr(e)}
 
-    return {'status': True, 'data': 'Upload Successfull.'}
+    return {'status': True, 'data': {'item_id':item.id},'msg':'Upload Successfull.'}
 
 
 @login_required

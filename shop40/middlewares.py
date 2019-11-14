@@ -21,13 +21,12 @@ class SetUserMiddleware(object):
         Adds: Sets req.user
         """
 
-        shadow_print(req.headers)
         token = req.get_header('Authorization')
 
         if token is None:
             req.user = None
         else:
-            login = Logins.get_or_none(token=token)
+            login = Logins.get_or_none(Logins.token==token)
             if login is not None:
                 # check if token is still valid
                 now = datetime.datetime.now()
@@ -38,7 +37,7 @@ class SetUserMiddleware(object):
                     req.user = login.user
             else:
                 req.user = None
-
+        
 
 class CORSComponent(object):
     def process_response(self, req, resp, resource, req_succeeded):

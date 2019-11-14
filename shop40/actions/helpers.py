@@ -51,7 +51,8 @@ def add_tags(item, tags):
             if record.exists():
                 record = record.get()
                 with db.atomic():
-                    record.items.add(item)
+                    if item not in record.items[:]:
+                        record.items.add(item)
             else:
              tag = Tags.create(tag=tag.lower())
              tag.items.add(item)
