@@ -69,6 +69,7 @@ def upload_item(req, **kwargs):
         else:
             item = Items.create(user=seller, item=item)
         add_tags(item, item.item['tags'])
+        #upload to sccial media
     except Exception as e:
         return {'status': False, 'data': repr(e)}
 
