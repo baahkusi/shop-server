@@ -22,11 +22,13 @@ class SetUserMiddleware(object):
         """
 
         token = req.get_header('Authorization')
+        email = req.get_header('Account-ID')
 
         if token is None:
             req.user = None
         else:
             login = Logins.get_or_none(Logins.token==token)
+            
             if login is not None:
                 # check if token is still valid
                 now = datetime.datetime.now()
@@ -34,7 +36,10 @@ class SetUserMiddleware(object):
                 if tdelta.days >= 30:
                     req.user = None
                 else:
-                    req.user = login.user
+                    if email == login.user.email:
+                        req.user = login.user
+                    else:
+                        req.user = None
             else:
                 req.user = None
         

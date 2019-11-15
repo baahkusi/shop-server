@@ -35,3 +35,18 @@ def test_fetch_item(client):
     response = client.simulate_post('/action', body=json.dumps(payload))
 
     assert response.json["111"]["fetch_item"]["status"]
+
+
+def test_get_user(client):
+
+    payload = {
+        "111": {
+            "get_user": {"id":1},
+            "000": ["get_user"]
+        },
+        "000": ["111"]
+    }
+
+    response = client.simulate_post('/action', body=json.dumps(payload))
+
+    assert response.json["111"]["get_user"]["status"]

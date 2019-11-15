@@ -22,9 +22,9 @@ def test_get_items(client):
         "000": ["111"]
     }
 
-    login = Logins.select(Logins.token).order_by(Logins.id.desc()).get()
+    login = Logins.select().order_by(Logins.id.desc()).get()
 
-    headers = {'Authorization': login.token}
+    headers = {'Authorization': login.token, 'Account-ID':login.user.email}
 
     response = client.simulate_post('/action',
                                     body=json.dumps(payload),

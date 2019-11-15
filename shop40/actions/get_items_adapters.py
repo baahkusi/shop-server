@@ -29,6 +29,7 @@ def users_shop(**kwargs):
 def seller_fetch(**kwargs):
     """
     This fecthes items for a particular seller, also loaded from top to down
+    :kwargs: seller
     """
     limit = kwargs['limit']
     page = kwargs['page'] - 1

@@ -85,3 +85,25 @@ def test_activate_account(client):
                                         headers=headers)
         r2 = response.json["111"]["activate_account"]["status"]
     assert r1 and r2
+
+
+
+def test_auth(client):
+
+    payload = {
+        "111": {
+            "auth": {},
+            "000": ["auth"]
+        },
+
+        "000": ["111"]
+    }
+
+    login = Logins.select().join(Users).order_by(Logins.id.desc()).get()
+
+    headers = {'Authorization': login.token, 'Account-ID':login.user.email}
+
+    response = client.simulate_post(
+        '/action', body=json.dumps(payload), headers=headers)
+    
+    assert response.json["111"]["auth"]["status"]

@@ -75,6 +75,28 @@ def login(req, **kwargs):
         return {"status": False, "data": "Login Failed."}
 
 
+def get_user(req, **kwargs):
+    """
+    :kwargs: id
+    """
+    try:
+        user = Users.get_or_none(id=int(kwargs['id']))
+        data = {
+            'id': user.id,
+            'phone': user.phone,
+            'name': user.name,
+            'level': user.level,
+            'email_verified': user.email_verified,
+            'phone_verified': user.phone_verified,
+            'info': user.info,
+            'is_active': user.is_active,
+        }
+    except Exception as e:
+        return {'status': False, 'msg': 'User Missing.'}
+
+    return {'status': True, 'data': data}
+
+
 @login_required
 def resend_email(req, **kwargs):
     """
@@ -112,7 +134,7 @@ def activate_account(req, **kwargs):
                 send_email(req.user.email, message)
             elif kwargs['medium'] == 'phone':
                 if not req.user.phone:
-                    return {'status':False, 'data':'Null Number.'}
+                    return {'status': False, 'data': 'Null Number.'}
         except Exception as e:
             return {'status': False, 'data': repr(e)}
         return {'status': True, 'data': 'Pin Sent.'}
@@ -134,6 +156,15 @@ def activate_account(req, **kwargs):
         except Exception as e:
             return {'status': False, 'data': repr(e)}
         return {'status': True, 'data': 'Account Activated.'}
+
+
+@login_required
+def auth(req, **kwargs):
+    """
+    :kwargs: None
+    """
+
+    return {'status': True, 'msg': 'Login Verified.'}
 
 
 @login_required
