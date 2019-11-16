@@ -11,13 +11,16 @@ def test_upload_item(client):
     imgs3 = [DataURI.from_file(f'tests/images/{i}.jpg') for i in range(13, 14)]
 
     item = {
-        "category":1,
-        "currency":"GHS",
-        "images":imgs1,
+        "category":
+        1,
+        "currency":
+        "GHS",
+        "images":
+        imgs1,
         "tags": ["1", "2", "3", "4"],
         "options": [{
             "name": "opt1",
-            "required":True,
+            "required": True,
             "values": [{
                 "images": imgs2,
             }, {
@@ -30,7 +33,7 @@ def test_upload_item(client):
         "111": {
             "upload_item": {
                 "item_details": item,
-                "seller_id":1
+                "seller_id": 1
             },
             "000": ["upload_item"]
         },
@@ -39,12 +42,16 @@ def test_upload_item(client):
 
     login = Logins.select().order_by(Logins.id.desc()).get()
 
-    headers = {'Authorization': login.token, 'Account-ID':login.user.email}
+    headers = {
+        'Authorization': login.token,
+        'Account-ID': login.user.email,
+        'Device-ID': login.device_hash
+    }
 
     response = client.simulate_post('/action',
                                     body=json.dumps(payload),
                                     headers=headers)
-    
+
     assert response.json["111"]["upload_item"]["status"]
 
 
@@ -56,13 +63,16 @@ def test_update_item(client):
     imgs3 = [DataURI.from_file(f'tests/images/{i}.jpg') for i in range(15, 16)]
 
     item = {
-        "category":2,
-        "currency":"GHS",
-        "images":imgs1,
-        "tags": ["0","1", "2", "3", "4","5","6","7","8","9"],
+        "category":
+        2,
+        "currency":
+        "GHS",
+        "images":
+        imgs1,
+        "tags": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
         "options": [{
             "name": "opt1",
-            "required":True,
+            "required": True,
             "values": [{
                 "images": imgs2,
             }, {
@@ -77,9 +87,9 @@ def test_update_item(client):
         "111": {
             "upload_item": {
                 "item_details": item,
-                "seller_id":1,
-                "update":True,
-                "id":item_new.id
+                "seller_id": 1,
+                "update": True,
+                "id": item_new.id
             },
             "000": ["upload_item"]
         },
@@ -88,11 +98,14 @@ def test_update_item(client):
 
     login = Logins.select().order_by(Logins.id.desc()).get()
 
-    headers = {'Authorization': login.token, 'Account-ID':login.user.email}
-    
+    headers = {
+        'Authorization': login.token,
+        'Account-ID': login.user.email,
+        'Device-ID': login.device_hash
+    }
+
     response = client.simulate_post('/action',
                                     body=json.dumps(payload),
                                     headers=headers)
 
     assert response.json["111"]["upload_item"]["status"]
-

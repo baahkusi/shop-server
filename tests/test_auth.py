@@ -49,7 +49,7 @@ def test_activate_account(client):
         "111": {
             "activate_account": {
                 "phase": "generate",
-                "medium":medium
+                "medium": medium
             },
             "000": ["activate_account"]
         },
@@ -58,7 +58,11 @@ def test_activate_account(client):
 
     login = Logins.select(Logins.token).order_by(Logins.id.desc()).get()
 
-    headers = {'Authorization': login.token}
+    headers = {
+        'Authorization': login.token,
+        'Account-ID': login.user.email,
+        'Device-ID': login.device_hash
+    }
 
     response = client.simulate_post('/action',
                                     body=json.dumps(payload),
@@ -72,7 +76,7 @@ def test_activate_account(client):
             "111": {
                 "activate_account": {
                     "phase": "activate",
-                    "medium":medium,
+                    "medium": medium,
                     "code": code
                 },
                 "000": ["activate_account"]
@@ -87,23 +91,20 @@ def test_activate_account(client):
     assert r1 and r2
 
 
-
 def test_auth(client):
 
-    payload = {
-        "111": {
-            "auth": {},
-            "000": ["auth"]
-        },
-
-        "000": ["111"]
-    }
+    payload = {"111": {"auth": {}, "000": ["auth"]}, "000": ["111"]}
 
     login = Logins.select().join(Users).order_by(Logins.id.desc()).get()
 
-    headers = {'Authorization': login.token, 'Account-ID':login.user.email}
+    headers = {
+        'Authorization': login.token,
+        'Account-ID': login.user.email,
+        'Device-ID': login.device_hash
+    }
 
-    response = client.simulate_post(
-        '/action', body=json.dumps(payload), headers=headers)
-    
+    response = client.simulate_post('/action',
+                                    body=json.dumps(payload),
+                                    headers=headers)
+
     assert response.json["111"]["auth"]["status"]

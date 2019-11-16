@@ -23,8 +23,9 @@ class SetUserMiddleware(object):
 
         token = req.get_header('Authorization')
         email = req.get_header('Account-ID')
+        device = req.get_header('Device-ID')
 
-        if token is None:
+        if token is None or email is None or device is None:
             req.user = None
         else:
             login = Logins.get_or_none(Logins.token==token)
@@ -36,7 +37,7 @@ class SetUserMiddleware(object):
                 if tdelta.days >= 30:
                     req.user = None
                 else:
-                    if email == login.user.email:
+                    if email == login.user.email and device == login.device_hash:
                         req.user = login.user
                     else:
                         req.user = None

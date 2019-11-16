@@ -1,6 +1,7 @@
 import json
 from shop40.db import Logins, Users
 
+
 def test_get_items(client):
 
     info = {
@@ -11,12 +12,14 @@ def test_get_items(client):
         "country": ["Ghana", "Ashanti"],
         "city": "Kumasi",
         "code": "+233",
-      }
-    
+    }
 
     payload = {
         "111": {
-            "set_info": {"info":"personal", "data":info},
+            "set_info": {
+                "info": "personal",
+                "data": info
+            },
             "000": ["set_info"]
         },
         "000": ["111"]
@@ -24,7 +27,11 @@ def test_get_items(client):
 
     login = Logins.select().order_by(Logins.id.desc()).get()
 
-    headers = {'Authorization': login.token, 'Account-ID':login.user.email}
+    headers = {
+        'Authorization': login.token,
+        'Account-ID': login.user.email,
+        'Device-ID': login.device_hash
+    }
 
     response = client.simulate_post('/action',
                                     body=json.dumps(payload),

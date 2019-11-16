@@ -24,9 +24,9 @@ def register(req, **kwargs):
 
     except Exception as e:
         shadow_print(e)
-        return {"status": False, "data": "Registration Failure."}
+        return {"status": False, "msg": "Email Exists."}
 
-    return {"status": True, "data": "Registration Success."}
+    return {"status": True, "msg": "Registration Successfull."}
 
 
 def login(req, **kwargs):
@@ -38,6 +38,13 @@ def login(req, **kwargs):
         user = Users.get_or_none(email=kwargs["email"])
 
         if user:
+            if user.login_tries + 1 > 10:
+                return {
+                    "status":False,
+                    "msg":"Your account has been blocked, you need to reset your password."
+                }
+            Users.update(login_tries=Users.login_tries +
+                         1).where(Users.id == user.id).execute()
             if bcrypt.checkpw(kwargs["password"].encode(),
                               user.password.encode()):
 
@@ -50,29 +57,35 @@ def login(req, **kwargs):
                     token=token,
                 )
                 user_data = {
-                    'email': user.email,
+                    'id': user.id,
+                    'phone': user.phone,
+                    'name': user.name,
                     'level': user.level,
                     'email_verified': user.email_verified,
-                    'phone_verified': user.phone_verified
+                    'phone_verified': user.phone_verified,
+                    'info': user.info,
+                    'is_active': user.is_active,
                 }
-                Users.update(login_count=Users.login_count + 1,
-                             last_login=datetime.datetime.now()).where(
-                                 Users.id == user.id).execute()
+                Users.update(
+                    login_count=Users.login_count + 1,
+                    last_login=datetime.datetime.now(),
+                    login_tries=0).where(Users.id == user.id).execute()
                 return {
                     "status": True,
                     "data": {
                         "token": token,
                         "user": user_data
-                    }
+                    },
+                    "msg": "Login Successfull."
                 }
             else:
-                return {"status": False, "data": "Wrong Password."}
+                return {"status": False, "msg": "Wrong Password."}
         else:
-            return {"status": False, "data": "Missing User."}
+            return {"status": False, "msg": "Missing User."}
 
     except Exception as e:
         shadow_print(e)
-        return {"status": False, "data": "Login Failed."}
+        return {"status": False, "msg": "Login Failed."}
 
 
 def get_user(req, **kwargs):
@@ -111,12 +124,12 @@ def resend_email(req, **kwargs):
             message = f"""Welcome to <strong> @Africaniz</strong>,.Akwaaba. 
                         Go to <a href='{req.referer}'>Africaniz Login.</a>"""
             send_email(kwargs["email"], message)
-            return {"status": True, "data": 'Email Sent.'}
+            return {"status": True, "msg": 'Email Sent.'}
         else:
-            return {"status": False, "data": "Missing User."}
+            return {"status": False, "msg": "Missing User."}
 
     except Exception as e:
-        return {"status": False, "data": "Resend Failed."}
+        return {"status": False, "msg": "Resend Failed."}
 
 
 @login_required
@@ -134,7 +147,7 @@ def activate_account(req, **kwargs):
                 send_email(req.user.email, message)
             elif kwargs['medium'] == 'phone':
                 if not req.user.phone:
-                    return {'status': False, 'data': 'Null Number.'}
+                    return {'status': False, 'msg': 'Null Number.'}
         except Exception as e:
             return {'status': False, 'data': repr(e)}
         return {'status': True, 'data': 'Pin Sent.'}
@@ -150,12 +163,12 @@ def activate_account(req, **kwargs):
                         Users.update(phone_verified=True).where(
                             Users.id == req.user.id).execute()
                 else:
-                    return {'status': False, 'data': 'Wrong User.'}
+                    return {'status': False, 'msg': 'Wrong User.'}
             else:
-                return {'status': False, 'data': 'Ungenerated Pin.'}
+                return {'status': False, 'msg': 'Ungenerated Pin.'}
         except Exception as e:
-            return {'status': False, 'data': repr(e)}
-        return {'status': True, 'data': 'Account Activated.'}
+            return {'status': False, 'msg': "Server Error."}
+        return {'status': True, 'msg': 'Account Activated.'}
 
 
 @login_required

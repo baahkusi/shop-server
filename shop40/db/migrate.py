@@ -28,7 +28,11 @@ migrations = [
     ],
     [
         migrator.drop_not_null('users','name')
-    ]
+    ],
+    [
+        migrator.add_column('users','logins_failed', Users.logins_failed),
+        migrator.add_column('users','login_tries', Users.login_tries)
+    ],
 ]
 
 if __name__ == "__main__":

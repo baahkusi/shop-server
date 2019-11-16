@@ -24,6 +24,8 @@ class Users(BaseModel):
     is_active = BooleanField(default=True)
     last_login = DateTimeField(null=True)
     login_count = IntegerField(default=0)
+    logins_failed = IntegerField(default=0)
+    login_tries = IntegerField(default=0)
 
     @property
     def login(self):
