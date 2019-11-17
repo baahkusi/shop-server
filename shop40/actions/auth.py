@@ -23,7 +23,6 @@ def register(req, **kwargs):
         send_email(kwargs["email"], message)
 
     except Exception as e:
-        shadow_print(e)
         return {"status": False, "msg": "Email Exists."}
 
     return {"status": True, "msg": "Registration Successfull."}
@@ -36,28 +35,32 @@ def login(req, **kwargs):
     try:
 
         user = Users.get_or_none(email=kwargs["email"])
-
+        
         if user:
+            
             if user.login_tries + 1 > 10:
+                
                 return {
                     "status":False,
                     "msg":"Your account has been blocked, you need to reset your password."
                 }
             Users.update(login_tries=Users.login_tries +
                          1).where(Users.id == user.id).execute()
+                         
             if bcrypt.checkpw(kwargs["password"].encode(),
                               user.password.encode()):
-
+                
                 token = gen_token(user.email, fresh_pin())
-
                 Logins.create(
                     user=user,
                     device_hash=kwargs["device_hash"],
                     device_data=kwargs["device_data"],
                     token=token,
                 )
+                
                 user_data = {
                     'id': user.id,
+                    'email':user.email,
                     'phone': user.phone,
                     'name': user.name,
                     'level': user.level,
@@ -66,10 +69,13 @@ def login(req, **kwargs):
                     'info': user.info,
                     'is_active': user.is_active,
                 }
+                
                 Users.update(
                     login_count=Users.login_count + 1,
                     last_login=datetime.datetime.now(),
                     login_tries=0).where(Users.id == user.id).execute()
+
+                
                 return {
                     "status": True,
                     "data": {
@@ -84,7 +90,6 @@ def login(req, **kwargs):
             return {"status": False, "msg": "Missing User."}
 
     except Exception as e:
-        shadow_print(e)
         return {"status": False, "msg": "Login Failed."}
 
 
@@ -96,6 +101,7 @@ def get_user(req, **kwargs):
         user = Users.get_or_none(id=int(kwargs['id']))
         data = {
             'id': user.id,
+            'email':user.email,
             'phone': user.phone,
             'name': user.name,
             'level': user.level,
@@ -107,7 +113,7 @@ def get_user(req, **kwargs):
     except Exception as e:
         return {'status': False, 'msg': 'User Missing.'}
 
-    return {'status': True, 'data': data}
+    return {'status': True, 'data': {'user':data}}
 
 
 @login_required
@@ -142,33 +148,46 @@ def activate_account(req, **kwargs):
     if kwargs['phase'] == 'generate':
         try:
             activation = Activations.create(user=req.user, code=fresh_pin(6))
-            message = f"""Here is your activation code from @Africaniz {activation.code}. It will expire in 30 minutes."""
+            message = f"""Here is your activation code from @Africaniz {activation.code}. It will expire in 5 minutes."""
             if kwargs['medium'] == 'email':
-                send_email(req.user.email, message)
+                if req.user.email_verified:
+                    return {'status':False,'msg':'Email Verified.'}
+                else:
+                    send_email(req.user.email, message)
             elif kwargs['medium'] == 'phone':
                 if not req.user.phone:
                     return {'status': False, 'msg': 'Null Number.'}
+                if req.user.phone_verified:
+                    return {'status':False,'msg':'Phone Verified.'}
+                else:
+                    pass
         except Exception as e:
-            return {'status': False, 'data': repr(e)}
-        return {'status': True, 'data': 'Pin Sent.'}
+            return {'status': False, 'msg': 'Try Again.'}
+        return {'status': True, 'msg': 'Pin Sent.'}
     elif kwargs['phase'] == 'activate':
         try:
             activation = Activations.get_or_none(code=kwargs['code'])
             if activation:
+                now = datetime.datetime.now()
+                tdelta = now - activation.ctime
+                if tdelta.seconds >= 5*60:
+                    return {'status':False,'msg':'Pin Expired.'}
                 if activation.user == req.user:
                     if kwargs['medium'] == 'email':
                         Users.update(email_verified=True).where(
                             Users.id == req.user.id).execute()
+                        msg = 'Email'
                     elif kwargs['medium'] == 'phone':
                         Users.update(phone_verified=True).where(
                             Users.id == req.user.id).execute()
+                        msg = 'Phone'
                 else:
                     return {'status': False, 'msg': 'Wrong User.'}
             else:
                 return {'status': False, 'msg': 'Ungenerated Pin.'}
         except Exception as e:
             return {'status': False, 'msg': "Server Error."}
-        return {'status': True, 'msg': 'Account Activated.'}
+        return {'status': True, 'msg': f'{msg} Activated.'}
 
 
 @login_required

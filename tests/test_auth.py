@@ -28,7 +28,7 @@ def test_login(client):
             "login": {
                 "email": "usebaku@gmail.com",
                 "password": "3229411841",
-                "device_hash": 4636326,
+                "device_hash": "64bea9715647332937c9c2b03a9e9771",
                 "device_data": {
                     "user_agent": "Mozilla"
                 }

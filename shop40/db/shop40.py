@@ -6,6 +6,7 @@ from .auth import Users, BaseModel
 class Items(BaseModel):
     
     user = ForeignKeyField(Users, backref='items')
+    info = JSONField(null=True)
     item = JSONField()
 
 

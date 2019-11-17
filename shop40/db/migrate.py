@@ -1,7 +1,7 @@
 from playhouse.migrate import *
 from ..config import db
-from .shop40 import Users
-
+from .shop40 import *
+from .auth import *
 # initialize migrator
 migrator = PostgresqlMigrator(db)
 
@@ -33,14 +33,18 @@ migrations = [
         migrator.add_column('users','logins_failed', Users.logins_failed),
         migrator.add_column('users','login_tries', Users.login_tries)
     ],
+    [
+        migrator.add_column('items','info', Items.info)
+    ],
 ]
 
 if __name__ == "__main__":
     if migrations:
         try:
             print('Loading Migrations ...')
-            migrate(*migrations[-1])
-            print('Migrations Successfully Completed')
+            with db.transaction():
+                migrate(*migrations[-1])
+            print('Migrations Successfully Completed.')
         except Exception as e:
             print(e)
     else:

@@ -29,7 +29,7 @@ def fetch_item(req, **kwargs):
 
     
     if not item:
-        return {'status': False, 'data': 'Item Unavailable.'}
+        return {'status': False, 'msg': 'Item Unavailable.'}
     user = Users.get_by_id(item.user.id)
 
     data = {
@@ -59,7 +59,7 @@ def upload_item(req, **kwargs):
                 item['options'][i]['values'][j]['images'] = upload_images(
                     item['options'][i]['values'][j]['images'], item['tags'])
     except Exception as e:
-        return {'status': False, 'data': repr(e)}
+        return {'status': False, 'msg': 'Images Upload Failed.'}
 
     try:
         seller = Users.get_by_id(int(kwargs['seller_id']))
@@ -71,7 +71,7 @@ def upload_item(req, **kwargs):
         add_tags(item, item.item['tags'])
         #upload to sccial media
     except Exception as e:
-        return {'status': False, 'data': repr(e)}
+        return {'status': False, 'msg': 'Upload Failed.'}
 
     return {'status': True, 'data': {'item_id':item.id},'msg':'Upload Successfull.'}
 
@@ -83,7 +83,7 @@ def verify_payment(req, **kwargs):
     :kwargs: payment
     """
 
-    return {'status': True, 'data': 'Payment Made.'}
+    return {'status': True, 'msg': 'Payment Made.'}
 
 
 @login_required
@@ -93,7 +93,7 @@ def place_order(req, **kwargs):
     :kwargs: order_details
     """
 
-    return {'status': True, 'data': 'Order Placed.'}
+    return {'status': True, 'msg': 'Order Placed.'}
 
 
 @login_required
@@ -140,9 +140,9 @@ def set_info(req, **kwargs):
                              phone_verified=False).where(
                                  Users.id == req.user.id).execute()
         else:
-            return {'status': False, 'data': 'Dunno what to do.'}
+            return {'status': False, 'msg': 'Dunno what to do.'}
 
     except Exception as e:
-        return {'status': False, 'data': repr(e)}
+        return {'status': False, 'msg': 'SetInfo Failed.'}
 
-    return {'status': True, 'data': 'Info Updated.'}
+    return {'status': True, 'msg': 'Info Updated.'}
