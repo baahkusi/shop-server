@@ -21,6 +21,7 @@ def up():
         Orders,
         Devices,
         UserDevices,
+        Notifications
     ])
     print("Successfully created tables ...")
 
@@ -42,6 +43,7 @@ def down():
         Orders,
         Devices,
         UserDevices,
+        Notifications
     ])
     print("Successfully dropped tables ...")
 

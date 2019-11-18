@@ -1,6 +1,6 @@
 import datetime
 import bcrypt
-from shop40.db import Users, Logins, Activations
+from shop40.db import Users, Logins, Activations, Notifications
 from shop40.utils import fresh_pin, send_email, gen_token, shadow_print
 from .decors import login_required
 
@@ -68,6 +68,8 @@ def login(req, **kwargs):
                     'phone_verified': user.phone_verified,
                     'info': user.info,
                     'is_active': user.is_active,
+                    'products': user.items.select().count(),
+                    'notes': user.notifications.select().where(Notifications.is_read==False).count()
                 }
                 
                 Users.update(
@@ -109,6 +111,7 @@ def get_user(req, **kwargs):
             'phone_verified': user.phone_verified,
             'info': user.info,
             'is_active': user.is_active,
+            'products': user.items.select().count(),
         }
     except Exception as e:
         return {'status': False, 'msg': 'User Missing.'}
