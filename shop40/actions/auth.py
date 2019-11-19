@@ -173,6 +173,7 @@ def activate_account(req, **kwargs):
             if activation:
                 now = datetime.datetime.now()
                 tdelta = now - activation.ctime
+                print(tdelta.seconds)
                 if tdelta.seconds >= 5*60:
                     return {'status':False,'msg':'Pin Expired.'}
                 if activation.user == req.user:

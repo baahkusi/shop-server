@@ -36,6 +36,9 @@ migrations = [
     [
         migrator.add_column('items','info', Items.info)
     ],
+    [
+        migrator.add_column('combinations','is_buyable', Combinations.is_buyable)
+    ]
 ]
 
 if __name__ == "__main__":

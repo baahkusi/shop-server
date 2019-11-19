@@ -24,6 +24,7 @@ class Combinations(BaseModel):
     name = CharField()
     items = ArrayField()
     is_private = BooleanField(default=False)
+    is_buyable = BooleanField(default=True)
 
 
 class Reviews(BaseModel):
@@ -38,6 +39,7 @@ class Comments(BaseModel):
     user = ForeignKeyField(Users, backref='comments')
     combo = ForeignKeyField(Combinations, backref='comments')
     review = TextField()
+
 
 class Likes(BaseModel):
 
@@ -64,9 +66,8 @@ class OrderItems(BaseModel):
     status = CharField(default='waiting') # waiting | processing | cancelled | suspended  completed
 
 
-
 class Notifications(BaseModel):
 
     user = ForeignKeyField(Users, backref='notifications')
     message = TextField()
-    is_read = BooleanField(default=False) 
+    is_read = BooleanField(default=False)
