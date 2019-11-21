@@ -14,7 +14,7 @@ class Users(BaseModel):
     email = CharField(unique=True)
     phone = CharField(unique=True, null=True)
     groups = ManyToManyField(Groups, backref='users')
-    password = CharField(max_length=512)
+    password = CharField(max_length=512, null=True)
     name = CharField(unique=True, null=True)
     auth_mode = CharField(max_length=64, default='login') #login  social
     level = CharField(default='customer') # root | superuser | staff | customer | seller

@@ -38,7 +38,10 @@ migrations = [
     ],
     [
         migrator.add_column('combinations','is_buyable', Combinations.is_buyable)
-    ]
+    ],
+    [
+        migrator.drop_not_null('users','password')
+    ],
 ]
 
 if __name__ == "__main__":

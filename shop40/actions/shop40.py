@@ -65,7 +65,7 @@ def upload_item(req, **kwargs):
         seller = Users.get_by_id(int(kwargs['seller_id']))
         if 'update' in kwargs:
             item = Items.update(item=item).where(Items.id==int(kwargs['id'])).execute()
-            item = Items.get_by_id(item)
+            item = Items.get_by_id(int(kwargs['id']))
         else:
             item = Items.create(user=seller, item=item)
         add_tags(item, item.item['tags'])
@@ -120,14 +120,14 @@ def set_info(req, **kwargs):
             if req.user.name != kwargs['data']['name']:
                 if Users.select().where(
                         Users.name == kwargs['data']['name']).exists():
-                    return {'status': False, 'data': 'Username Exists.'}
+                    return {'status': False, 'msg': 'Username Exists.'}
                 Users.update(name=kwargs['data']['name']).where(
                     Users.id == req.user.id).execute()
 
             if req.user.email != kwargs['data']['email']:
                 if Users.select().where(
                         Users.email == kwargs['data']['email']).exists():
-                    return {'status': False, 'data': 'Email Exists.'}
+                    return {'status': False, 'msg': 'Email Exists.'}
                 Users.update(email=kwargs['data']['email'],
                              email_verified=False).where(
                                  Users.id == req.user.id).execute()
@@ -135,7 +135,7 @@ def set_info(req, **kwargs):
             if req.user.phone != kwargs['data']['phone']:
                 if Users.select().where(
                         Users.phone == kwargs['data']['phone']).exists():
-                    return {'status': False, 'data': 'Phone Exists.'}
+                    return {'status': False, 'msg': 'Phone Exists.'}
                 Users.update(phone=kwargs['data']['phone'],
                              phone_verified=False).where(
                                  Users.id == req.user.id).execute()

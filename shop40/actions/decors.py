@@ -13,16 +13,16 @@ def login_required(func):
     return wrapper
 
 
-def user_required(user_types):
+def user_required(levels):
 
     def inner(func):
 
         @wraps(func)
         def wrapper(req, **kwargs):
 
-            if req.user.user_type in user_types:
+            if req.user.level in levels:
                 return func(req, **kwargs)
             else:
                 return {'status':False, 'msg':'Permission Required'}
-    
+        return wrapper
     return inner

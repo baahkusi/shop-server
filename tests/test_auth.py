@@ -108,3 +108,38 @@ def test_auth(client):
                                     headers=headers)
 
     assert response.json["111"]["auth"]["status"]
+
+
+def test_create_user(client):
+
+    payload = {
+            "111": {
+                "create_user": {
+                    "email":"africaniz.shop@gmail.com", 
+                    "phone":"987654321", 
+                    "level":"admin", 
+                    "country":["Ghana", "Ashanti"], 
+                    "city":"Kumasi", 
+                    "code":"+233", 
+                    "phone_code":"+233 987654321",
+                    "mode":"edit",
+                    "id":12
+                },
+                "000": ["create_user"]
+            },
+            "000": ["111"]
+        }
+
+    login = Logins.select().join(Users).order_by(Logins.id.desc()).get()
+
+    headers = {
+        'Authorization': login.token,
+        'Account-ID': login.user.email,
+        'Device-ID': login.device_hash
+    }
+
+    response = client.simulate_post('/action',
+                                    body=json.dumps(payload),
+                                    headers=headers)
+
+    assert response.json["111"]["create_user"]["status"]
