@@ -31,7 +31,6 @@ def upload_images(images, tags = []):
                 image,
                 folder = 'test' if TESTING=='true' else 'africaniz',
                 tags = tags,
-                format = 'jpg'
             )
         imgs.append({
             'url':img['secure_url'],
