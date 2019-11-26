@@ -6,3 +6,5 @@ sendgrid
 bcrypt
 cloudinary
 python-dotenv
+python-twitter
+facebook-sdk

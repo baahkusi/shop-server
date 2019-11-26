@@ -7,27 +7,27 @@ Here we handle social media interactions. For instance, we have the following;
 """
 
 
-def upload_to_facebook(post):
+def upload_to_facebook(item):
     pass
 
 
-def upload_to_instagram(post):
+def upload_to_instagram(item):
     pass
 
 
-def upload_to_twitter(post):
+def upload_to_twitter(item):
     pass
 
 
-def upload_to_social_media(post, media='fit'):
+def upload_to_social_media(item, media=['facebook']):
     
-    if 'f' in 'fit':
-        fb = upload_to_facebook(post)
+    if 'f' in media:
+        fb = upload_to_facebook(item_post)
 
     if 'i' in 'fit':
-        insta = upload_to_instagram(post)
+        insta = upload_to_instagram(item_post)
 
     if 't' in 'fit':
-        tt = upload_to_twitter(post)
+        tt = upload_to_twitter(item_post)
 
     return {'status':True, 'msg':'Uploads Successfull'}
