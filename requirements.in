@@ -1,3 +1,4 @@
+pytest
 falcon
 gunicorn
 peewee
@@ -8,3 +9,4 @@ cloudinary
 python-dotenv
 python-twitter
 facebook-sdk
+python-datauri
