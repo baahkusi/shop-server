@@ -10,8 +10,8 @@ def test_register(client):
     payload = {
         "111": {
             "register": {
-                "email": "usebaku@gmail.com",
-                "password": "3229411841"
+                "email": "shop.africaniz@gmail.com",
+                "password": "1234-shop-africaniz"
             },
             "000": ["register"]
         },
@@ -26,8 +26,8 @@ def test_login(client):
     payload = {
         "111": {
             "login": {
-                "email": "usebaku@gmail.com",
-                "password": "3229411841",
+                "email": "shop.africaniz@gmail.com",
+                "password": "1234-shop-africaniz",
                 "device_hash": "64bea9715647332937c9c2b03a9e9771",
                 "device_data": {
                     "user_agent": "Mozilla"
@@ -44,7 +44,7 @@ def test_login(client):
 
 
 def test_activate_account(client):
-    medium = "phone"
+    medium = "email"
     payload = {
         "111": {
             "activate_account": {
@@ -122,7 +122,7 @@ def test_create_user(client):
                     "city":"Kumasi", 
                     "code":"+233", 
                     "phone_code":"+233 987654321",
-                    "mode":"edit",
+                    "mode":"create",
                     "id":12
                 },
                 "000": ["create_user"]

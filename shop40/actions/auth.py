@@ -1,7 +1,7 @@
 import datetime
 import bcrypt
 from shop40.db import Users, Logins, Activations, Notifications
-from shop40.utils import fresh_pin, send_email, gen_token, shadow_print
+from shop40.utils import fresh_pin, send_email, gen_token
 from .decors import login_required, user_required
 
 
@@ -19,8 +19,9 @@ def register(req, **kwargs):
         )
 
         message = f"""Welcome to <strong> @Africaniz</strong>,.Akwaaba. 
-                            Go to <a href='{req.referer}'>Africaniz Login.</a>"""
-        send_email(kwargs["email"], message)
+                            Go to <a href='https://www.africaniz.com/auth/login'>Africaniz Login.</a>"""
+        template = {'id': 'd64d339f-5146-48ea-bdae-35244673c420', 'data': {}}
+        send_email(kwargs["email"], message, template)
 
     except Exception as e:
         return {"status": False, "msg": "Email Exists."}
@@ -129,11 +130,11 @@ def get_user(req, **kwargs):
     except Exception as e:
         return {'status': False, 'msg': 'User Missing.'}
 
-    return {'status': True, 'data': {'user': data},'msg':'User Fetched.'}
+    return {'status': True, 'data': {'user': data}, 'msg': 'User Fetched.'}
 
 
 @login_required
-@user_required(['root','super','admin'])
+@user_required(['root', 'super', 'admin'])
 def get_users(req, **kwargs):
     """
     :kwargs: None
@@ -147,10 +148,11 @@ def get_users(req, **kwargs):
         users = Users.select(
             Users.id, Users.email, Users.phone, Users.level, Users.name,
             Users.login_count, Users.login_tries, Users.logins_failed,
-            Users.last_login.to_timestamp().alias('last_login')).where(filt).dicts()[:]
+            Users.last_login.to_timestamp().alias('last_login')).where(
+                filt).dicts()[:]
     except Exception as e:
-        return {'status':False, 'msg':'Exception Raised.'}
-    return {'status':True,'data':users,'msg':'Users Found.'}
+        return {'status': False, 'msg': 'Exception Raised.'}
+    return {'status': True, 'data': users, 'msg': 'Users Found.'}
 
 
 @login_required
@@ -198,8 +200,9 @@ def create_user(req, **kwargs):
                                 level=kwargs['level'],
                                 info=info)
             message = f"""Welcome to <strong> @Africaniz</strong>,.Akwaaba. 
-                            Go to <a href='{req.referer}/auth/reset'>Africaniz Reset Password.</a>"""
-            send_email(kwargs["email"], message)
+                            Go to <a href='https://www.africaniz.com/auth/reset'>Africaniz Reset Password.</a>"""
+            template = {'id': 'd-a57c95d98df745008d1caeedcaec18fd', 'data': {}}
+            send_email(kwargs["email"], message, template)
         elif kwargs['mode'] == 'edit':
             user = Users.update(
                 email=kwargs['email'],
@@ -222,14 +225,13 @@ def create_user(req, **kwargs):
 
 
 @login_required
-@user_required(['root','super','admin'])
+@user_required(['root', 'super', 'admin'])
 def switch_seller(req, **kwargs):
     """
     :kwargs: seller
     """
 
-    return get_user(req ,id=kwargs['seller'])
-
+    return get_user(req, id=kwargs['seller'])
 
 
 @login_required
@@ -247,7 +249,13 @@ def activate_account(req, **kwargs):
                 if req.user.email_verified:
                     return {'status': False, 'msg': 'Email Verified.'}
                 else:
-                    send_email(req.user.email, message)
+                    template = {
+                        'id': 'd-ddcfb895e0904b98bc78828c27d63df2',
+                        'data': {
+                            'code':activation.code
+                        }
+                    }
+                    send_email(req.user.email, message, template)
             elif kwargs['medium'] == 'phone':
                 if not req.user.phone:
                     return {'status': False, 'msg': 'Null Number.'}

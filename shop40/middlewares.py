@@ -1,7 +1,6 @@
 import datetime
 from .db import Users, Logins
 from .config import db
-from .utils import shadow_print
 
 class SetUserMiddleware(object):
     def process_request(self, req, resp):
@@ -76,7 +75,7 @@ class PeeweeConnectionMiddleware(object):
         try:
             db.connect()
         except Exception as e:
-            shadow_print(e)
+            pass
 
     def process_response(self, req, resp, resource, req_succeeded):
         if not db.is_closed():

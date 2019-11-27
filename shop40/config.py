@@ -12,12 +12,19 @@ SENDGRID_API_KEY = getenv("SENDGRID_API_KEY")
 TESTING = getenv('TESTING')
 CLOUDINARY_API_KEY = getenv('CLOUDINARY_API_KEY')
 CLOUDINARY_API_SECRET = getenv('CLOUDINARY_API_SECRET')
+CLOUDINARY_NAME = getenv('CLOUDINARY_NAME')
 IN_DOCKER = getenv('IN_DOCKER')
+DATABASE_URL = getenv('DATABASE_URL')
+PLATFORM= getenv('PLATFORM')
 
-host = 'db' if IN_DOCKER=='true' else 'localhost'
 
-db = PostgresqlExtDatabase(POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD,
+if PLATFORM != 'heroku':
+    host = 'db' if IN_DOCKER=='true' else 'localhost'
+    db = PostgresqlExtDatabase(POSTGRES_DB, user=POSTGRES_USER, password=POSTGRES_PASSWORD,
                            host=host, port=5432)
+else:
+    from playhouse.db_url import connect
+    db = connect(DATABASE_URL)
 
 
 

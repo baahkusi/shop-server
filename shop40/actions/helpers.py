@@ -1,8 +1,7 @@
 import cloudinary
 from cloudinary.uploader import upload
-from shop40.config import CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, TESTING, db
+from shop40.config import CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_NAME, TESTING, db
 from shop40.db import Tags, Items
-from shop40.utils import shadow_print
 
 
 
@@ -12,7 +11,7 @@ def upload_images(images, tags = []):
     """
 
     cloudinary.config( 
-        cloud_name = "neaonnim", 
+        cloud_name = CLOUDINARY_NAME, 
         api_key = CLOUDINARY_API_KEY, 
         api_secret = CLOUDINARY_API_SECRET 
     )
@@ -56,7 +55,6 @@ def add_tags(item, tags):
              tag = Tags.create(tag=tag.lower())
              tag.items.add(item)
         except Exception as e:
-            shadow_print(e)
             return False
     
     return True

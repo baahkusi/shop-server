@@ -6,6 +6,7 @@ from .auth import Users, BaseModel
 class Items(BaseModel):
     
     user = ForeignKeyField(Users, backref='items')
+    is_published = BooleanField(default=False)
     info = JSONField(null=True)
     item = JSONField()
 
@@ -56,14 +57,17 @@ class Follows(BaseModel):
 class Orders(BaseModel):
 
     user = ForeignKeyField(Users, backref='orders')
-    status = CharField(default='waiting') # waiting | processing | cancelled | suspended completed
+    info = JSONField(null=True)
+    payment = JSONField(null=True)
+    location = JSONField(null=True)
+    status = CharField(default='waiting') # waiting | processing | cancelled | suspended | completed
 
 
 class OrderItems(BaseModel):
 
     order = ForeignKeyField(Orders, backref='items')
     order_item = JSONField()
-    status = CharField(default='waiting') # waiting | processing | cancelled | suspended  completed
+    status = CharField(default='waiting') # waiting | processing | cancelled | suspended | completed
 
 
 class Notifications(BaseModel):

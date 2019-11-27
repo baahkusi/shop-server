@@ -42,6 +42,16 @@ migrations = [
     [
         migrator.drop_not_null('users','password')
     ],
+    [
+        migrator.add_column('items','is_published', Items.is_published)
+    ],
+    [
+        migrator.add_column('orders','payment', Orders.payment),
+        migrator.add_column('orders','location', Orders.location)
+    ],
+    [
+        migrator.add_column('orders','info', Orders.info),
+    ]
 ]
 
 if __name__ == "__main__":

@@ -13,9 +13,9 @@ def naive_loader(**kwargs):
     page = kwargs['page'] - 1
     start = page * limit
     end = start + limit
-    return Items.select(Users.id.alias('seller_id'),
-                        Users.name.alias('seller'), Items.id,
-                        Items.item).join(Users).dicts()[start:end]
+    return Items.select(
+        Users.id.alias('seller_id'), Users.name.alias('seller'), Items.id,
+        Items.item).join(Users).order_by(Items.id.desc()).dicts()[start:end]
 
 
 def users_shop(**kwargs):
@@ -35,5 +35,6 @@ def seller_fetch(**kwargs):
     page = kwargs['page'] - 1
     start = page * limit
     end = start + limit
-    return Items.select(Items.ctime.to_timestamp().alias('timestamp'), Items.id, Items.item).join(Users).where(
-        Users.id == kwargs['seller']).dicts()[start:end]
+    return Items.select(Items.ctime.to_timestamp().alias('timestamp'),
+                        Items.id, Items.item).join(Users).where(
+                            Users.id == kwargs['seller']).dicts()[start:end]

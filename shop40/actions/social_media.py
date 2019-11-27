@@ -21,13 +21,13 @@ def upload_to_twitter(item):
 
 def upload_to_social_media(item, media=['facebook']):
     
-    if 'f' in media:
+    if 'facebook' in media:
         fb = upload_to_facebook(item_post)
 
-    if 'i' in 'fit':
+    if 'instagram' in media:
         insta = upload_to_instagram(item_post)
 
-    if 't' in 'fit':
+    if 'twitter' in media:
         tt = upload_to_twitter(item_post)
 
     return {'status':True, 'msg':'Uploads Successfull'}
