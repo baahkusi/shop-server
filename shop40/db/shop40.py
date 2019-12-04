@@ -1,4 +1,4 @@
-from peewee import ForeignKeyField, CharField, TextField, BooleanField, ManyToManyField
+from peewee import ForeignKeyField, CharField, TextField, BooleanField, ManyToManyField, IntegerField
 from playhouse.postgres_ext import JSONField, ArrayField
 from .auth import Users, BaseModel
 
@@ -24,8 +24,9 @@ class Combinations(BaseModel):
     user = ForeignKeyField(Users, backref='combinations')
     name = CharField()
     items = ArrayField()
+    info = JSONField(null=True)
     is_private = BooleanField(default=False)
-    is_buyable = BooleanField(default=True)
+    is_buyable = BooleanField(default=False)
 
 
 class Reviews(BaseModel):
@@ -45,7 +46,9 @@ class Comments(BaseModel):
 class Likes(BaseModel):
 
     user = ForeignKeyField(Users, backref='likes')
-    item = ForeignKeyField(Items, backref='likes')
+    what = CharField(default="item")
+    pk = IntegerField(default=0)
+    is_liked = BooleanField(default=True)
 
 
 class Follows(BaseModel):

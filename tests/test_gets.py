@@ -69,3 +69,56 @@ def test_get_user(client):
     response = client.simulate_post('/action', body=json.dumps(payload))
 
     assert response.json["111"]["get_user"]["status"]
+
+
+def test_fetch_combo(client):
+
+    payload = {
+        "111":{
+            "fetch_combo":{"id":3},
+            "000":["fetch_combo"]
+        },
+        "000":["111"]
+    }
+
+    response = client.simulate_post('/action', body=json.dumps(payload))
+
+    assert response.json["111"]["fetch_combo"]["status"]
+
+
+def test_get_combos(client):
+
+    payload = {
+        "111":{
+            "get_combos":{
+                "limit":4,
+                "page":1
+            },
+            "000":["get_combos"]
+        },
+        "000":["111"]
+    }
+
+    response = client.simulate_post('/action', body=json.dumps(payload))
+
+    assert response.json["111"]["get_combos"]["status"]
+
+
+def test_get_combos_fetch(client):
+
+    payload = {
+        "111":{
+            "get_combos":{
+                "fetch":True,
+                "user":2,
+                "limit":4,
+                "page":1
+            },
+            "000":["get_combos"]
+        },
+        "000":["111"]
+    }
+
+    response = client.simulate_post('/action', body=json.dumps(payload))
+
+    assert response.json["111"]["get_combos"]["status"]

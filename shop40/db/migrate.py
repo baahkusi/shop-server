@@ -6,52 +6,11 @@ from .auth import *
 migrator = PostgresqlMigrator(db)
 
 migrations = [
-    [
-        migrator.drop_column('users','phone'),
-        migrator.drop_column('users','desc'),
-        migrator.drop_column('users','phone'),
-        migrator.drop_column('users','desc'),
-        migrator.add_column('users', 'info', Users.info),
-    ],
-    [
-        migrator.drop_column('users','info'),
-        migrator.add_column('users', 'info', Users.info)
-    ],
-    [
-        migrator.add_index('users', ['name'], unique=True)
-    ],
-    [
-        migrator.drop_column('logins', 'expired')
-    ],
-    [
-        migrator.add_column('users','phone', Users.phone)
-    ],
-    [
-        migrator.drop_not_null('users','name')
-    ],
-    [
-        migrator.add_column('users','logins_failed', Users.logins_failed),
-        migrator.add_column('users','login_tries', Users.login_tries)
-    ],
-    [
-        migrator.add_column('items','info', Items.info)
-    ],
-    [
-        migrator.add_column('combinations','is_buyable', Combinations.is_buyable)
-    ],
-    [
-        migrator.drop_not_null('users','password')
-    ],
-    [
-        migrator.add_column('items','is_published', Items.is_published)
-    ],
-    [
-        migrator.add_column('orders','payment', Orders.payment),
-        migrator.add_column('orders','location', Orders.location)
-    ],
-    [
-        migrator.add_column('orders','info', Orders.info),
-    ]
+    migrator.add_column('combinations', 'info', Combinations.info),
+    migrator.drop_column('likes', 'item_id'),
+    migrator.add_column('likes', 'what', Likes.what),
+    migrator.add_column('likes', 'pk', Likes.pk),
+    migrator.add_column('likes', 'is_liked', Likes.is_liked),
 ]
 
 if __name__ == "__main__":
@@ -59,7 +18,7 @@ if __name__ == "__main__":
         try:
             print('Loading Migrations ...')
             with db.transaction():
-                migrate(*migrations[-1])
+                migrate(*migrations)
             print('Migrations Successfully Completed.')
         except Exception as e:
             print(e)

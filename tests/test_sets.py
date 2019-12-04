@@ -38,3 +38,23 @@ def test_get_items(client):
                                     headers=headers)
 
     assert response.json["111"]["set_info"]["status"]
+
+
+def test_like(client, auth_headers):
+
+    payload = {
+        "111": {
+            "like": {
+                "what": "combo",
+                "pk": 1
+            },
+            "000": ["like"]
+        },
+        "000": ["111"]
+    }
+
+    response = client.simulate_post('/action',
+                                    body=json.dumps(payload),
+                                    headers=auth_headers)
+
+    assert response.json["111"]["like"]["status"]

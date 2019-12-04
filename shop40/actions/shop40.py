@@ -1,7 +1,8 @@
 from playhouse.shortcuts import model_to_dict
-from shop40.db import Items, Users
+from shop40.db import Items, Users, Combinations, Likes
 from .decors import login_required
 from .get_items_adapters import naive_loader, users_shop, seller_fetch
+from .get_combos_adapters import combo_loader, user_combos
 from .helpers import upload_images, add_tags
 
 
@@ -27,19 +28,19 @@ def fetch_item(req, **kwargs):
     """
     item = Items.select().where(Items.id == kwargs['item']).join(Users).get()
 
-    
     if not item:
         return {'status': False, 'msg': 'Item Unavailable.'}
     user = Users.get_by_id(item.user.id)
-
+    likes = Likes.select().where(Likes.what=='item', Likes.pk==item.id).count()
     data = {
-        'seller_id':user.id,
-        'seller_name':user.name,
-        'seller_info':user.info,
-        'id':item.id,
-        'item':item.item
+        'seller_id': user.id,
+        'seller_name': user.name,
+        'seller_info': user.info,
+        'id': item.id,
+        'likes': likes,
+        'item': item.item
     }
-    return {'status': True, 'data':{item.id: data} }
+    return {'status': True, 'data': {item.id: data}}
 
 
 @login_required
@@ -64,7 +65,8 @@ def upload_item(req, **kwargs):
     try:
         seller = Users.get_by_id(int(kwargs['seller_id']))
         if 'update' in kwargs:
-            item = Items.update(item=item).where(Items.id==int(kwargs['id'])).execute()
+            item = Items.update(item=item).where(
+                Items.id == int(kwargs['id'])).execute()
             item = Items.get_by_id(int(kwargs['id']))
         else:
             item = Items.create(user=seller, item=item)
@@ -73,7 +75,13 @@ def upload_item(req, **kwargs):
     except Exception as e:
         return {'status': False, 'msg': 'Upload Failed.'}
 
-    return {'status': True, 'data': {'item_id':item.id},'msg':'Upload Successfull.'}
+    return {
+        'status': True,
+        'data': {
+            'item_id': item.id
+        },
+        'msg': 'Upload Successfull.'
+    }
 
 
 @login_required
@@ -146,3 +154,93 @@ def set_info(req, **kwargs):
         return {'status': False, 'msg': 'SetInfo Failed.'}
 
     return {'status': True, 'msg': 'Info Updated.'}
+
+
+@login_required
+def create_combo(req, **kwargs):
+    """
+    :kwargs: name, items, update(Boolean, whether to update), id(if update==True)
+    """
+    try:
+        if kwargs['update']:
+            combo = Combinations.get_or_none(id=kwargs['id'])
+            if combo and combo.user == req.user:
+                combo.name = kwargs['name']
+                combo.items = kwargs['items']
+                combo.save()
+            else:
+                return {'status': False, 'msg': 'Not Existent'}
+        else:
+            pk = Combinations.create(user=req.user,
+                                     name=kwargs['name'],
+                                     items=kwargs['items'])
+    except Exception as e:
+        return {'status': False, 'msg': ''}
+    return {'status': True, 'msg': ''}
+
+
+def get_combos(req, **kwargs):
+    """
+    :kwargs: fetch (user fetch), limit ,page, user
+    """
+
+    if 'fetch' in kwargs:
+        data = user_combos(**kwargs)
+    else:
+        data = combo_loader(**kwargs)
+
+    return {'status': True, 'data': data}
+
+
+def fetch_combo(req, **kwargs):
+    """
+    :kwargs: id,
+    """
+
+    combo = Combinations.get_or_none(id=kwargs['id'])
+
+    if combo:
+        try:
+            combo_items = Items.select(Users.id.alias('seller_id'),
+                                       Users.name.alias('seller'), Items.id,
+                                       Items.item).join(Users).where(
+                                           Items.id.in_(
+                                               combo.items)).dicts()[:]
+        except Exception as e:
+            return {'status': False, 'msg': 'Running Items.'}
+    else:
+        return {'status': False, 'msg': 'Combo Missing.'}
+
+    data = {
+        'items': combo_items,
+        'id': combo.id,
+        'info': combo.info,
+        'is_buyable': combo.is_buyable,
+        'is_private': combo.is_private
+    }
+
+    return {'status': True, 'data': data}
+
+
+@login_required
+def like(req, **kwargs):
+    """
+    :kwargs: what, pk
+    """
+    try:
+        like = Likes.select().where(Likes.user == req.user,
+                                    Likes.what == kwargs['what'],
+                                    Likes.pk == kwargs['pk'])
+
+        if like.exists():
+            like = like.get()
+            like.is_liked = not like.is_liked
+            like.save()
+            msg = 'UnLike Happened.'
+        else:
+            Likes.create(user=req.user, what=kwargs['what'], pk=kwargs['pk'])
+            msg = 'Like Happened.'
+    except Exception as e:
+        return {'status': False, 'msg': 'Like Error.'}
+
+    return {'status': True, 'msg': msg}

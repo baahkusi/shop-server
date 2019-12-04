@@ -1,6 +1,6 @@
 import json
 from datauri import DataURI
-from shop40.db import Logins, Users, Items
+from shop40.db import Logins, Users, Items, Combinations
 
 
 def test_upload_item(client):
@@ -109,3 +109,48 @@ def test_update_item(client):
                                     headers=headers)
 
     assert response.json["111"]["upload_item"]["status"]
+
+
+def test_create_combo(client, auth_headers):
+
+    payload = {
+        "111": {
+            "create_combo": {
+                "items": [1,2,3],
+                "update": False,
+                "name": "Christmas Combo"
+            },
+            "000": ["create_combo"]
+        },
+        "000": ["111"]
+    }
+
+    response = client.simulate_post('/action',
+                                    body=json.dumps(payload),
+                                    headers=auth_headers)
+
+    assert response.json["111"]["create_combo"]["status"]
+
+
+def test_create_combo_update(client, auth_headers):
+    
+    combo = Combinations.select().order_by(Combinations.id.desc()).get()
+    payload = {
+        "111": {
+            "create_combo": {
+                "items": [3,4,5,2],
+                "update": True,
+                "name": "Easter Combo",
+                "id": 4#combo.id
+            },
+            "000": ["create_combo"]
+        },
+        "000": ["111"]
+    }
+
+    response = client.simulate_post('/action',
+                                    body=json.dumps(payload),
+                                    headers=auth_headers)
+
+    assert response.json["111"]["create_combo"]["status"]
+
