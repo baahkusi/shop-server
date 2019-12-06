@@ -43,6 +43,43 @@ def test_login(client):
     assert response.json["111"]["login"]["status"]
 
 
+def test_reset_password(client):
+    payload = {
+        "111": {
+            "reset_password": {
+                "phase": "generate",
+                "email": "shop.africaniz@gmail.com"
+            },
+            "000": ["reset_password"]
+        },
+        "000": ["111"]
+    }
+
+    response = client.simulate_post('/action', body=json.dumps(payload))
+
+    r1 = response.json["111"]["reset_password"]["status"]
+    r2 = False
+    if r1:
+        code = Activations.select().order_by(Activations.id.desc()).get().code
+        payload = {
+            "111": {
+                "reset_password": {
+                    "phase": "reset",
+                    "email": "shop.africaniz@gmail.com",
+                    "password": "4321-shop-africaniz",
+                    "code": code
+                },
+                "000": ["reset_password"]
+            },
+            "000": ["111"]
+        }
+
+        response = client.simulate_post('/action',body=json.dumps(payload))
+        
+        r2 = response.json["111"]["reset_password"]["status"]
+    assert r1 and r2
+
+
 def test_activate_account(client):
     medium = "email"
     payload = {

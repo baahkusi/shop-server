@@ -1,7 +1,8 @@
 """
 This file contains various methods for loading products for display
 """
-from shop40.db import Items, Users
+from peewee import fn, JOIN
+from shop40.db import Items, Users, Likes
 
 
 def naive_loader(**kwargs):
@@ -13,9 +14,14 @@ def naive_loader(**kwargs):
     page = kwargs['page'] - 1
     start = page * limit
     end = start + limit
-    return Items.select(
-        Users.id.alias('seller_id'), Users.name.alias('seller'), Items.id,
-        Items.item).join(Users).order_by(Items.id.desc()).dicts()[start:end]
+    likes = Likes.select(Likes.pk,
+                         fn.COUNT(Likes.id).alias('likes')).where(
+                             Likes.what == 'item').group_by(Likes.pk)
+
+    return Items.select(Users.id.alias('seller_id'),
+                        Users.name.alias('seller'), Items.id, Items.item,
+                        likes.c.likes).join(Users).switch(Items).join(likes, JOIN.LEFT_OUTER, on=(likes.c.pk == Items.id)).order_by(
+                            Items.id.desc()).dicts()[start:end]
 
 
 def users_shop(**kwargs):

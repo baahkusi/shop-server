@@ -62,29 +62,15 @@ def login(req, **kwargs):
                 )
 
                 user_data = {
-                    'id':
-                    user.id,
-                    'email':
-                    user.email,
-                    'phone':
-                    user.phone,
-                    'name':
-                    user.name,
-                    'level':
-                    user.level,
-                    'email_verified':
-                    user.email_verified,
-                    'phone_verified':
-                    user.phone_verified,
-                    'info':
-                    user.info,
-                    'is_active':
-                    user.is_active,
-                    'products':
-                    user.items.select().count(),
-                    'notes':
-                    user.notifications.select().where(
-                        Notifications.is_read == False).count()
+                    'id': user.id,
+                    'email': user.email,
+                    'phone': user.phone,
+                    'name': user.name,
+                    'level': user.level,
+                    'email_verified': user.email_verified,
+                    'phone_verified': user.phone_verified,
+                    'info': user.info,
+                    'is_active': user.is_active,
                 }
 
                 Users.update(
@@ -116,21 +102,79 @@ def get_user(req, **kwargs):
     try:
         user = Users.get_or_none(id=int(kwargs['id']))
         data = {
-            'id': user.id,
-            'email': user.email,
-            'phone': user.phone,
-            'name': user.name,
-            'level': user.level,
-            'email_verified': user.email_verified,
-            'phone_verified': user.phone_verified,
-            'info': user.info,
-            'is_active': user.is_active,
-            'products': user.items.select().count(),
+            'id':
+            user.id,
+            'email':
+            user.email,
+            'phone':
+            user.phone,
+            'name':
+            user.name,
+            'level':
+            user.level,
+            'email_verified':
+            user.email_verified,
+            'phone_verified':
+            user.phone_verified,
+            'info':
+            user.info,
+            'is_active':
+            user.is_active,
+            'products':
+            user.items.select().count(),
+            'notes':
+            user.notifications.select().where(
+                Notifications.is_read == False).count()
         }
     except Exception as e:
         return {'status': False, 'msg': 'User Missing.'}
 
     return {'status': True, 'data': {'user': data}, 'msg': 'User Fetched.'}
+
+
+def reset_password(req, **kwargs):
+    """
+    :kwargs:
+    """
+    """
+    :kwargs: phase (there are two phases, first generate, second reset), code
+            medium ( phone | email)
+    """
+
+    if kwargs['phase'] == 'generate':
+        try:
+            activation = Activations.create(code=fresh_pin(6))
+            message = f"""Here is your activation code from @Africaniz {activation.code}. It will expire in 5 minutes."""
+            template = {
+                'id': 'd-ddcfb895e0904b98bc78828c27d63df2',
+                'data': {
+                    'code': activation.code
+                }
+            }
+            send_email(kwargs['email'], message, template)
+        except Exception as e:
+            return {'status': False, 'msg': 'Try Again.'}
+        return {'status': True, 'msg': 'Pin Sent.'}
+    elif kwargs['phase'] == 'reset':
+        try:
+            activation = Activations.get_or_none(code=kwargs['code'])
+            if activation:
+                now = datetime.datetime.now()
+                tdelta = now - activation.ctime
+
+                if tdelta.seconds >= 5 * 60:
+                    return {'status': False, 'msg': 'Pin Expired.'}
+                if 'password' in kwargs and kwargs['password'] != "":
+                    Users.update(password=bcrypt.hashpw(
+                        kwargs["password"].encode(), bcrypt.gensalt())).where(
+                            Users.email == kwargs['email']).execute()
+                else:
+                    return {'status': False, 'msg': 'Missing Password'}
+            else:
+                return {'status': False, 'msg': 'Ungenerated Pin.'}
+        except Exception as e:
+            return {'status': False, 'msg': "Server Error."}
+        return {'status': True, 'msg': 'Password Reset.'}
 
 
 @login_required
@@ -252,7 +296,7 @@ def activate_account(req, **kwargs):
                     template = {
                         'id': 'd-ddcfb895e0904b98bc78828c27d63df2',
                         'data': {
-                            'code':activation.code
+                            'code': activation.code
                         }
                     }
                     send_email(req.user.email, message, template)

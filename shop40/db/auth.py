@@ -42,5 +42,5 @@ class Logins(BaseModel):
 
 class Activations(BaseModel):
 
-    user = ForeignKeyField(Users, backref='logins')
+    user = ForeignKeyField(Users, backref='activations', null=True)
     code = CharField(unique=True)
