@@ -120,5 +120,21 @@ def test_get_combos_fetch(client):
     }
 
     response = client.simulate_post('/action', body=json.dumps(payload))
+    assert response.json["111"]["get_combos"]["status"]
 
+
+def test_get_combos_light(client):
+
+    payload = {
+        "111":{
+            "get_combos":{
+                "light":True,
+                "user":2,
+            },
+            "000":["get_combos"]
+        },
+        "000":["111"]
+    }
+
+    response = client.simulate_post('/action', body=json.dumps(payload))
     assert response.json["111"]["get_combos"]["status"]

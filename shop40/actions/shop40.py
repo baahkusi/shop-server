@@ -31,7 +31,8 @@ def fetch_item(req, **kwargs):
     if not item:
         return {'status': False, 'msg': 'Item Unavailable.'}
     user = Users.get_by_id(item.user.id)
-    likes = Likes.select().where(Likes.what=='item', Likes.pk==item.id).count()
+    likes = Likes.select().where(Likes.what == 'item',
+                                 Likes.pk == item.id).count()
     data = {
         'seller_id': user.id,
         'seller_name': user.name,
@@ -186,6 +187,10 @@ def get_combos(req, **kwargs):
 
     if 'fetch' in kwargs:
         data = user_combos(**kwargs)
+    elif 'light' in kwargs:
+        data = Combinations.select(Combinations.id, Combinations.name,
+                                   Combinations.items).join(Users).where(
+                                       Users.id == kwargs['user']).dicts()[:]
     else:
         data = combo_loader(**kwargs)
 
